@@ -1,46 +1,46 @@
-package com.serpents.ipv6dns.spring.jdbc;
+package com.serpents.ipv6dns.spring.jooq;
 
 
 import com.serpents.ipv6dns.spring.PropertiesConfig;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 
 import static com.serpents.ipv6dns.spring.PropertiesConfig.ApplicationProperty.JDBC_URL;
+import static org.jooq.SQLDialect.POSTGRES;
+import static org.jooq.impl.DSL.using;
 
 @SuppressWarnings("unused")
 @Configuration
 @EnableWebMvc
-public class JdbcConfig {
+public class JooqConfig {
     private final String databaseUrl;
 
     @Autowired
-    public JdbcConfig(final PropertiesConfig propertiesConfig) {
+    public JooqConfig(final PropertiesConfig propertiesConfig) {
         databaseUrl = propertiesConfig.getProperty(JDBC_URL);
     }
 
     @Bean(destroyMethod = "close")
-    public DataSource getDataSource() {
+    public DataSource dataSource() {
         final BasicDataSource dataSource = new BasicDataSource();
         dataSource.setUrl(databaseUrl);
         return dataSource;
     }
 
     @Bean
-    public NamedParameterJdbcOperations jdbcOperations(final DataSource dataSource) {
-        return new NamedParameterJdbcTemplate(dataSource);
-    }
-
-    @Bean(name = "transactionManager")
-    public PlatformTransactionManager getTransactionManager(final DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
+    public DSLContext dslContext(final DataSource dataSource) {
+        try {
+            return using(dataSource.getConnection(), POSTGRES);
+        } catch (SQLException sqle) {
+            System.err.println("Couldn't initialize connection");
+            throw new RuntimeException(sqle);
+        }
     }
 }
