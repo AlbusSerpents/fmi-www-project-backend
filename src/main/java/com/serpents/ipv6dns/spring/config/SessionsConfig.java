@@ -1,6 +1,7 @@
-package com.serpents.ipv6dns.spring.sessions;
+package com.serpents.ipv6dns.spring.config;
 
-import com.serpents.ipv6dns.spring.PropertiesConfig;
+import com.serpents.ipv6dns.spring.properties.ApplicationProperties;
+import com.serpents.ipv6dns.spring.properties.ApplicationPropertiesKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,8 +13,6 @@ import org.springframework.session.config.annotation.web.http.EnableSpringHttpSe
 import org.springframework.session.web.http.HeaderHttpSessionStrategy;
 import org.springframework.session.web.http.HttpSessionStrategy;
 
-import static com.serpents.ipv6dns.spring.PropertiesConfig.ApplicationProperty.SESSION_INACTIVITY_INTERVAL_IN_SECONDS;
-
 @Configuration
 @EnableSpringHttpSession
 public class SessionsConfig {
@@ -21,8 +20,8 @@ public class SessionsConfig {
     private final int timeoutInSeconds;
 
     @Autowired
-    public SessionsConfig(final PropertiesConfig propertiesConfig) {
-        final String timeoutString = propertiesConfig.getProperty(SESSION_INACTIVITY_INTERVAL_IN_SECONDS);
+    public SessionsConfig(final ApplicationProperties applicationProperties) {
+        final String timeoutString = applicationProperties.getProperty(ApplicationPropertiesKey.SESSION_INACTIVITY_INTERVAL_IN_SECONDS);
         timeoutInSeconds = Integer.parseInt(timeoutString);
     }
 

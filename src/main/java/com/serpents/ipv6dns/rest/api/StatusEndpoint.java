@@ -1,7 +1,7 @@
-package com.serpents.ipv6dns.rest;
+package com.serpents.ipv6dns.rest.api;
 
-import com.serpents.ipv6dns.model.UserCredentials;
-import com.serpents.ipv6dns.repository.AuthenticationRepository;
+import com.serpents.ipv6dns.status.Status;
+import com.serpents.ipv6dns.status.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -9,13 +9,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/status")
 @RestController
-public class TempEndpoint {
+public class StatusEndpoint {
+
+    private final StatusService service;
 
     @Autowired
-    private AuthenticationRepository repository;
+    public StatusEndpoint(final StatusService service) {
+        this.service = service;
+    }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public UserCredentials findUser() {
-        return repository.findAdmin("pesho", "1234");
+    public Status status() {
+        return service.getStatus();
     }
 }

@@ -1,4 +1,4 @@
-package com.serpents.ipv6dns.spring.security;
+package com.serpents.ipv6dns.spring.user.details;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import static java.nio.charset.Charset.forName;
 import static java.security.MessageDigest.getInstance;
 
 @Component
-public class PasswordEncoderImpl implements PasswordEncoder {
+class PasswordEncoderImpl implements PasswordEncoder {
 
     private static final Charset CHARSET = forName("UTF-8");
 

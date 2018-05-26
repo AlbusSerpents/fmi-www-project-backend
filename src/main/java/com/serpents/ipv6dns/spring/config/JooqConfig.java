@@ -1,7 +1,8 @@
-package com.serpents.ipv6dns.spring.jooq;
+package com.serpents.ipv6dns.spring.config;
 
 
-import com.serpents.ipv6dns.spring.PropertiesConfig;
+import com.serpents.ipv6dns.spring.properties.ApplicationProperties;
+import com.serpents.ipv6dns.spring.properties.ApplicationPropertiesKey;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
-import static com.serpents.ipv6dns.spring.PropertiesConfig.ApplicationProperty.JDBC_URL;
 import static org.jooq.SQLDialect.POSTGRES;
 import static org.jooq.impl.DSL.using;
 
@@ -23,8 +23,8 @@ public class JooqConfig {
     private final String databaseUrl;
 
     @Autowired
-    public JooqConfig(final PropertiesConfig propertiesConfig) {
-        databaseUrl = propertiesConfig.getProperty(JDBC_URL);
+    public JooqConfig(final ApplicationProperties applicationProperties) {
+        databaseUrl = applicationProperties.getProperty(ApplicationPropertiesKey.JDBC_URL);
     }
 
     @Bean(destroyMethod = "close")

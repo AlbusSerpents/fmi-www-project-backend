@@ -1,5 +1,7 @@
-package com.serpents.ipv6dns.spring;
+package com.serpents.ipv6dns.spring.config;
 
+import com.serpents.ipv6dns.spring.properties.ApplicationProperties;
+import com.serpents.ipv6dns.spring.properties.ApplicationPropertiesKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -13,17 +15,17 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 public class WebMvcConfig extends WebMvcAutoConfiguration {
 
-    private final PropertiesConfig propertiesConfig;
+    private final ApplicationProperties applicationProperties;
 
     @Autowired
-    public WebMvcConfig(final PropertiesConfig propertiesConfig) {
-        this.propertiesConfig = propertiesConfig;
+    public WebMvcConfig(final ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
     }
 
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
         final BasicAuthenticationEntryPoint entryPoint = new BasicAuthenticationEntryPoint();
-        final String realmName = propertiesConfig.getProperty(PropertiesConfig.ApplicationProperty.REALM_NAME);
+        final String realmName = applicationProperties.getProperty(ApplicationPropertiesKey.REALM_NAME);
         entryPoint.setRealmName(realmName);
         return entryPoint;
     }

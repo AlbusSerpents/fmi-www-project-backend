@@ -1,4 +1,4 @@
-package com.serpents.ipv6dns.spring.security;
+package com.serpents.ipv6dns.spring.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

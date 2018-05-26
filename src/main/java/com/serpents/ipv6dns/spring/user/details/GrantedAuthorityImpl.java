@@ -1,8 +1,8 @@
-package com.serpents.ipv6dns.spring.security;
+package com.serpents.ipv6dns.spring.user.details;
 
 import org.springframework.security.core.GrantedAuthority;
 
-public enum GrantedAuthorityImpl implements GrantedAuthority {
+enum GrantedAuthorityImpl implements GrantedAuthority {
     BASE_USER("base"), ADMINISTRATOR("admin"), CLIENT("client");
 
     GrantedAuthorityImpl(final String authority) {

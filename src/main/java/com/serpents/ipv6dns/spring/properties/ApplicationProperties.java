@@ -1,4 +1,4 @@
-package com.serpents.ipv6dns.spring;
+package com.serpents.ipv6dns.spring.properties;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -9,21 +9,8 @@ import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.Properties;
 
-@SuppressWarnings("unused")
 @Component
-public class PropertiesConfig {
-
-    public enum ApplicationProperty {
-        REALM_NAME("security.realm.name"),
-        SESSION_INACTIVITY_INTERVAL_IN_SECONDS("session.timeout.seconds"),
-        JDBC_URL("database.url");
-
-        ApplicationProperty(final String key) {
-            this.key = key;
-        }
-
-        private final String key;
-    }
+public class ApplicationProperties {
 
     private final Properties properties = new Properties();
     private Resource applicationProperties;
@@ -44,8 +31,8 @@ public class PropertiesConfig {
         }
     }
 
-    public String getProperty(final ApplicationProperty property) {
-        final String key = property.key;
+    public String getProperty(final ApplicationPropertiesKey property) {
+        final String key = property.getKey();
         return this.properties.getProperty(key);
     }
 
