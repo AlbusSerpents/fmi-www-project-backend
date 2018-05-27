@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
 import static com.serpents.ipv6dns.spring.user.details.GrantedAuthorityImpl.BASE_USER;
+import static com.serpents.ipv6dns.spring.user.details.GrantedAuthorityImpl.CLIENT_USER;
 import static org.springframework.http.HttpMethod.*;
 
 @Configuration
@@ -51,9 +52,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .exceptionHandling().authenticationEntryPoint(entryPoint)
             .and().authorizeRequests()
 
+            // register client
+            .regexMatchers(POST, "/client").permitAll()
+
+            // login
             .regexMatchers(POST, "/auth").permitAll()
 
+            // logout
             .regexMatchers(DELETE, "/auth").hasAuthority(BASE_USER.getAuthority())
+
+            // request domain
+            .regexMatchers(POST, "/request/domain").hasAuthority(CLIENT_USER.getAuthority())
+
 
             // common
             .regexMatchers(GET, "/status").permitAll();
