@@ -12,7 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
-import static org.springframework.http.HttpMethod.GET;
+import static com.serpents.ipv6dns.spring.user.details.GrantedAuthorityImpl.BASE_USER;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
@@ -49,6 +50,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf().disable()
             .exceptionHandling().authenticationEntryPoint(entryPoint)
             .and().authorizeRequests()
+
+            .regexMatchers(POST, "/auth").permitAll()
+
+            .regexMatchers(DELETE, "/auth").hasAuthority(BASE_USER.getAuthority())
 
             // common
             .regexMatchers(GET, "/status").permitAll();
