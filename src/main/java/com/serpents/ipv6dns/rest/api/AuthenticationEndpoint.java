@@ -4,13 +4,20 @@ import com.serpents.ipv6dns.authentication.AuthenticationRequest;
 import com.serpents.ipv6dns.authentication.AuthenticationResponse;
 import com.serpents.ipv6dns.authentication.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 @RequestMapping(value = "/auth", consumes = "application/json")
@@ -23,14 +30,14 @@ public class AuthenticationEndpoint {
         this.service = service;
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "", method = POST)
+    @ResponseStatus(CREATED)
     public AuthenticationResponse login(final HttpSession session, final @RequestBody @Valid AuthenticationRequest request) {
         return service.authenticate(request, session.getId());
     }
 
-    @RequestMapping(value = "", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "", method = DELETE)
+    @ResponseStatus(NO_CONTENT)
     public void logout(final HttpSession session, final @AuthenticationPrincipal UserDetails details) {
         System.out.println(details.getUsername());
         session.invalidate();
