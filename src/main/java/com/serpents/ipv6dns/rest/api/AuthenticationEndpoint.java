@@ -39,7 +39,6 @@ public class AuthenticationEndpoint {
     @RequestMapping(value = "", method = DELETE)
     @ResponseStatus(NO_CONTENT)
     public void logout(final HttpSession session, final @AuthenticationPrincipal UserDetails details) {
-        System.out.println(details.getUsername());
         session.invalidate();
     }
 }
