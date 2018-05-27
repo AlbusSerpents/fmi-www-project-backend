@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,7 +25,11 @@ public class AuthenticationService {
         final String password = request.getPassword();
         final Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(authenticationUsername, password);
 
-        authenticationManager.authenticate(authenticationRequest);
+        final Authentication authenticationResponse = authenticationManager.authenticate(authenticationRequest);
+        final SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(authenticationResponse);
+
+
         return new AuthenticationResponse(sessionId, username);
     }
 }
