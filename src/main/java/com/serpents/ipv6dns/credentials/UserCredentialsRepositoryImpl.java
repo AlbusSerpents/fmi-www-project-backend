@@ -26,7 +26,7 @@ class UserCredentialsRepositoryImpl implements UserCredentialsRepository {
         final Table<?> adminsTable = table("admin_users");
         final Param<Boolean> isBlockedField = inline(false);
 
-        return findFromUserTableByUsername(adminsTable, username, isBlockedField);
+        return context.transactionResult(() -> findFromUserTableByUsername(adminsTable, username, isBlockedField));
     }
 
     @Override
@@ -34,7 +34,7 @@ class UserCredentialsRepositoryImpl implements UserCredentialsRepository {
         final Table<?> clientsTable = table("client_users");
         final Field<Boolean> isBlockedField = field("is_blocked", Boolean.class);
 
-        return findFromUserTableByUsername(clientsTable, username, isBlockedField);
+        return context.transactionResult(() -> findFromUserTableByUsername(clientsTable, username, isBlockedField));
     }
 
     private UserCredentials findFromUserTableByUsername(final Table<?> table, final String username, final Field<Boolean> isBlockedField) {
