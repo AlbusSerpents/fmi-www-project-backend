@@ -24,7 +24,7 @@ class UserCredentialsRepositoryImpl implements UserCredentialsRepository {
     @Override
     public UserCredentials findAdmin(final String username) {
         final Table<?> adminsTable = table("admin_users");
-        final Param<Boolean> isBlockedField = inline(true);
+        final Param<Boolean> isBlockedField = inline(false);
 
         return findFromUserTableByUsername(adminsTable, username, isBlockedField);
     }
