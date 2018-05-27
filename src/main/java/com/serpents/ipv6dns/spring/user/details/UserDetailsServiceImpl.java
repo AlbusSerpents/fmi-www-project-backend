@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -30,6 +31,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(final String roleAndName) throws UsernameNotFoundException {
         final Pair<Optional<UserRole>, String> splitUsername = splitUsername(roleAndName);
         final String username = splitUsername.getSecond();
