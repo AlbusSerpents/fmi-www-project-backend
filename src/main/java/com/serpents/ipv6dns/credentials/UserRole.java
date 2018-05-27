@@ -1,5 +1,7 @@
 package com.serpents.ipv6dns.credentials;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.util.Optional;
 
 import static java.util.Optional.empty;
@@ -18,6 +20,7 @@ public enum UserRole {
         return token;
     }
 
+    @JsonCreator
     public static Optional<UserRole> fromToken(final char token) {
         for (UserRole role : UserRole.values()) {
             if (role.token == token) {
