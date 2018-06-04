@@ -19,7 +19,7 @@ public class StatusEndpoint {
         this.service = service;
     }
 
-    @RequestMapping(value = "", method = GET)
+    @RequestMapping(value = "", method = GET, produces = "application/json")
     public Status status() {
         return service.getStatus();
     }

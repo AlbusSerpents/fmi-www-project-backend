@@ -30,7 +30,7 @@ public class AuthenticationEndpoint {
         this.service = service;
     }
 
-    @RequestMapping(value = "", method = POST, consumes = "application/json")
+    @RequestMapping(value = "", method = POST, consumes = "application/json", produces = "application/json")
     @ResponseStatus(CREATED)
     public AuthenticationResponse login(final HttpSession session, final @RequestBody @Valid AuthenticationRequest request) {
         return service.authenticate(request, session.getId());

@@ -26,7 +26,7 @@ public class RegistrationEndpoint {
     }
 
     @ResponseStatus(CREATED)
-    @RequestMapping(value = "", method = POST)
+    @RequestMapping(value = "", method = POST, produces = "application/json")
     public RegistrationResponse register(final @RequestBody @Valid RegistrationRequest request) {
         return service.register(request);
     }

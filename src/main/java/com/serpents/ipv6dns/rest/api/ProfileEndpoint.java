@@ -31,7 +31,7 @@ public class ProfileEndpoint {
     }
 
     @ResponseStatus(OK)
-    @RequestMapping(value = "/{userId}", method = GET)
+    @RequestMapping(value = "/{userId}", method = GET, produces = "application/json")
     public Profile getProfile(
             final @AuthenticationPrincipal UserDetailsImpl details,
             final @PathVariable(name = "userId") UUID userId,
