@@ -20,7 +20,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
-@RequestMapping(value = "/user", consumes = "application/json")
+@RequestMapping(value = "/user")
 public class ProfileEndpoint {
 
     private final ProfileService service;
@@ -42,7 +42,7 @@ public class ProfileEndpoint {
     }
 
     @ResponseStatus(NO_CONTENT)
-    @RequestMapping(value = "/{userId}", method = PUT)
+    @RequestMapping(value = "/{userId}", method = PUT, consumes = "application/json")
     public void updateProfile(
             final @AuthenticationPrincipal UserDetailsImpl details,
             final @PathVariable(name = "userId") UUID userId,

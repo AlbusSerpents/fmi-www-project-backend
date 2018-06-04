@@ -20,7 +20,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
-@RequestMapping(value = "/auth", consumes = "application/json")
+@RequestMapping(value = "/auth")
 public class AuthenticationEndpoint {
 
     private final AuthenticationService service;
@@ -30,7 +30,7 @@ public class AuthenticationEndpoint {
         this.service = service;
     }
 
-    @RequestMapping(value = "", method = POST)
+    @RequestMapping(value = "", method = POST, consumes = "application/json")
     @ResponseStatus(CREATED)
     public AuthenticationResponse login(final HttpSession session, final @RequestBody @Valid AuthenticationRequest request) {
         return service.authenticate(request, session.getId());
