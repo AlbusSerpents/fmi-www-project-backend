@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
+import java.util.function.Function;
 
 import static org.jooq.impl.DSL.*;
 
@@ -20,6 +21,13 @@ public class ProfileRepositoryImpl implements ProfileRepository {
     private final Field<String> nameField = field("name", String.class);
     private final Field<String> emailField = field("email", String.class);
 
+    private final Table<?> adminsTable = table("admins");
+    private final Table<?> clientsTable = table("clients");
+    private final Table<?> usersTable = table("users");
+
+    private final Table<?> clientUsersView = table("client_users");
+    private final Table<?> adminUsersView = table("admin_users");
+
     private DSLContext context;
 
     @Autowired
@@ -29,36 +37,32 @@ public class ProfileRepositoryImpl implements ProfileRepository {
 
     @Override
     public ClientProfile findClient(final UUID id) {
-        final Table<?> clientsTable = table("client_users");
 
         final Field<Integer> facultyNumberField = field("faculty_number", Integer.class);
 
         return context.select(idField, usernameField, nameField, facultyNumberField, emailField)
-                      .from(clientsTable)
+                      .from(clientUsersView)
                       .where(idField.equal(inline(id)))
                       .fetchOne(record -> new ClientProfile(record.value1(), record.value2(), record.value3(), record.value4(), record.value5()));
     }
 
     @Override
     public AdminProfile findAdmin(final UUID id) {
-        final Table<?> adminsTable = table("admins_table");
 
         return context.select(idField, usernameField, nameField, emailField)
-                      .from(adminsTable)
+                      .from(adminUsersView)
                       .where(idField.equal(inline(id)))
                       .fetchOne(record -> new AdminProfile(record.value1(), record.value2(), record.value3(), record.value4()));
     }
 
     @Override
     public void updateClientEmail(final UUID id, final String email) {
-        final Table<?> adminTable = table("clients");
-        updateEmailFieldForTable(adminTable, id, email);
+        updateEmailFieldForTable(clientsTable, id, email);
     }
 
     @Override
     public void updateAdminEmail(final UUID id, final String email) {
-        final Table<?> adminTable = table("admins");
-        updateEmailFieldForTable(adminTable, id, email);
+        updateEmailFieldForTable(adminsTable, id, email);
     }
 
     private void updateEmailFieldForTable(final Table<?> table, final UUID id, final String email) {
@@ -74,8 +78,7 @@ public class ProfileRepositoryImpl implements ProfileRepository {
 
     @Override
     public void changePassword(final UUID userId, final UserRole role, final ChangePasswordRequest request) {
-        final Table<?> usersTable = table("users");
-        final Table<?> extraUsersTable = table(extraUsersTableForRole(role));
+        final Table<?> extraUsersTable = extraUsersTableForRole(role);
 
 
         final Field<UUID> idField = field("id", UUID.class);
@@ -97,14 +100,23 @@ public class ProfileRepositoryImpl implements ProfileRepository {
                .execute();
     }
 
-    private String extraUsersTableForRole(final UserRole role) {
+    private Table<?> extraUsersTableForRole(final UserRole role) {
         switch (role) {
             case CLIENT:
-                return "clients";
+                return clientsTable;
             case ADMIN:
-                return "admins";
+                return adminsTable;
             default:
                 return null;
         }
+    }
+
+    @Override
+    public void deleteClient(final UUID userId) {
+        final Function<Table<?>, Integer> deleteFromTableById = table -> context.delete(table)
+                                                                                .where(idField.equal(inline(userId)))
+                                                                                .execute();
+        deleteFromTableById.apply(clientsTable);
+        deleteFromTableById.apply(usersTable);
     }
 }

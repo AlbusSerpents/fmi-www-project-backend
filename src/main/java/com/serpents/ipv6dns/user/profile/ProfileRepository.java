@@ -17,4 +17,6 @@ public interface ProfileRepository {
 
     void changePassword(final UUID userId, final UserRole role, final ChangePasswordRequest request);
 
+    void deleteClient(final UUID userId);
+
 }

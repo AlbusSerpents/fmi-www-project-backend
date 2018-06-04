@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,8 +17,7 @@ import java.util.UUID;
 import static com.serpents.ipv6dns.utils.UserDetailsUtils.validateUserId;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequestMapping(value = "/user", consumes = "application/json")
@@ -49,5 +49,16 @@ public class ProfileEndpoint {
             final @RequestBody @Valid ProfileUpdateRequest request) {
         validateUserId(details, userId);
         service.updateProfile(userId, request);
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/{userId}", method = DELETE)
+    public void deleteProfile(
+            final @AuthenticationPrincipal UserDetailsImpl details,
+            final @PathVariable(name = "userId") UUID userId,
+            final HttpSession session) {
+        validateUserId(details, userId);
+        service.deleteProfile(userId);
+        session.invalidate();
     }
 }

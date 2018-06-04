@@ -56,6 +56,11 @@ public class ProfileService {
         }
     }
 
+    @Transactional
+    public void deleteProfile(final UUID userId) {
+        repository.deleteClient(userId);
+    }
+
     private UserRole getRole(final Optional<UserRole> optionalRole) {
         return optionalRole.orElseThrow(() -> new BadRequestException("Unknown role"));
     }
