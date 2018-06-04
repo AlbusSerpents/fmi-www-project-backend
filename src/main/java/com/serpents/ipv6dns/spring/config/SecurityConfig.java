@@ -12,8 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
-import static com.serpents.ipv6dns.spring.user.details.GrantedAuthorityImpl.BASE_USER;
-import static com.serpents.ipv6dns.spring.user.details.GrantedAuthorityImpl.CLIENT_USER;
+import static com.serpents.ipv6dns.spring.user.details.GrantedAuthorityImpl.*;
 import static org.springframework.http.HttpMethod.*;
 
 @Configuration
@@ -62,7 +61,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .regexMatchers(DELETE, "/auth").hasAuthority(BASE_USER.getAuthority())
 
             // Delete profile
-            .regexMatchers(DELETE,"user/.*").hasAuthority(CLIENT_USER.getAuthority())
+            .regexMatchers(DELETE, "user/.*").hasAuthority(CLIENT_USER.getAuthority())
+
+            // Create domain request
+            .regexMatchers(POST, "request").hasAnyAuthority(CLIENT_USER.getAuthority())
+
+            // Cancel domain request
+            .regexMatchers(DELETE, "request/.*").hasAnyAuthority(CLIENT_USER.getAuthority())
+
+            // Approve domain requests
+            .regexMatchers(POST, "request/.*/approve").hasAnyAuthority(ADMIN_USER.getAuthority())
+
+            // Reject domain requests
+            .regexMatchers(POST, "request/.*/reject").hasAnyAuthority(ADMIN_USER.getAuthority())
 
             // user profile requests
             .regexMatchers("user/.*").hasAuthority(BASE_USER.getAuthority())
