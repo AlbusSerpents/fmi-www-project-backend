@@ -18,4 +18,10 @@ public class DomainRequest {
 
     private DomainDetails domainDetails;
 
+    public DomainRequest(final UUID clientId, final DomainRequestStatus status, final DomainDetails domainDetails) {
+        this.clientId = clientId;
+        this.status = status;
+        this.domainDetails = domainDetails;
+    }
+
 }
