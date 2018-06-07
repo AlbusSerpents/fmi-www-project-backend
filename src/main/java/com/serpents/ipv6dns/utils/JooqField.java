@@ -13,6 +13,7 @@ public class JooqField<T> {
     public static final JooqField<LocalDateTime> UPDATED_AT = new JooqField<>();
     public static final JooqField<DomainRequestStatus> STATUS = new JooqField<>();
     public static final JooqField<UUID> DETAILS_ID = new JooqField<>();
+    public static final JooqField<String> ADDRESS = new JooqField<>();
 
     private JooqField() {
     }

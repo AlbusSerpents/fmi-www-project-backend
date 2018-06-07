@@ -1,7 +1,7 @@
 package com.serpents.ipv6dns.domain.request;
 
 import com.serpents.ipv6dns.address.Address;
-import com.serpents.ipv6dns.address.AddressRepository;
+import com.serpents.ipv6dns.address.AddressesRepository;
 import com.serpents.ipv6dns.domain.Domain;
 import com.serpents.ipv6dns.domain.DomainCreatedResponse;
 import com.serpents.ipv6dns.domain.DomainDetails;
@@ -22,13 +22,13 @@ public class DomainRequestsService {
 
     private final DomainRequestsRepository requestsRepository;
     private final DomainRepository domainRepository;
-    private final AddressRepository addressRepository;
+    private final AddressesRepository addressesRepository;
 
     @Autowired
-    public DomainRequestsService(final DomainRequestsRepository requestsRepository, final DomainRepository domainRepository, final AddressRepository addressRepository) {
+    public DomainRequestsService(final DomainRequestsRepository requestsRepository, final DomainRepository domainRepository, final AddressesRepository addressesRepository) {
         this.requestsRepository = requestsRepository;
         this.domainRepository = domainRepository;
-        this.addressRepository = addressRepository;
+        this.addressesRepository = addressesRepository;
     }
 
     @Transactional
@@ -49,7 +49,11 @@ public class DomainRequestsService {
 
     @Transactional
     public DomainCreatedResponse approveRequest(final UUID requestId, final DomainRequestApproval approval) {
-        final Address address = approval.getAddress().orElseGet(addressRepository::findFreeAddress);
+        final Address address = approval
+                .getAddressId()
+                .map(addressesRepository::findById)
+                .orElseGet(addressesRepository::findFreeAddress);
+
         final DomainRequest request = requestsRepository.findById(requestId);
         final Domain domain = new Domain(request, address);
 

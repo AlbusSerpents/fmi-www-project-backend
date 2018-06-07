@@ -27,7 +27,6 @@ public enum JooqSchemaUtils {
             return fieldsMap;
         }
     },
-
     DOMAIN_REQUESTS(table("domain_requests").as("dr")) {
         @Override
         protected Map<JooqField, Field<?>> loadFieldsMap() {
@@ -39,6 +38,28 @@ public enum JooqSchemaUtils {
             fieldsMap.put(STATUS, field("dr.status", DomainRequestStatus.class));
             fieldsMap.put(DETAILS_ID, field("dr.domain_details_id", UUID.class));
 
+            return fieldsMap;
+        }
+    },
+    ADDRESSES(table("free_addresses").as("a")) {
+        @Override
+        protected Map<JooqField, Field<?>> loadFieldsMap() {
+            final Map<JooqField, Field<?>> fieldsMap = new HashMap<>();
+
+            fieldsMap.put(ID, field("a.id", UUID.class));
+            fieldsMap.put(ADDRESS, field("a.address", String.class))
+            ;
+            return fieldsMap;
+        }
+    },
+    FREE_ADDRESSES(table("free_addresses").as("fa")) {
+        @Override
+        protected Map<JooqField, Field<?>> loadFieldsMap() {
+            final Map<JooqField, Field<?>> fieldsMap = new HashMap<>();
+
+            fieldsMap.put(ID, field("fa.id", UUID.class));
+            fieldsMap.put(ADDRESS, field("fa.address", String.class))
+            ;
             return fieldsMap;
         }
     };
