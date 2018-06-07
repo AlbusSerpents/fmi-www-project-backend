@@ -33,7 +33,7 @@ public class DomainRequestsService {
 
     @Transactional
     public DomainRequestResponse requestDomain(final UUID clientId, final DomainDetails details) {
-        final DomainRequest request = new DomainRequest(clientId, DomainRequestStatus.SENT, details);
+        final DomainRequest request = new DomainRequest(clientId, SENT, details);
         return requestsRepository.insert(request);
     }
 

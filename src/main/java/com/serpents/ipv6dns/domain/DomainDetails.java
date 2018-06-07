@@ -18,6 +18,12 @@ public class DomainDetails {
     private String domainName;
     private Optional<String> description = empty();
 
+    public DomainDetails(final UUID id, final String domainName, final String description) {
+        this.id = id;
+        this.domainName = domainName;
+        this.description = ofNullable(description);
+    }
+
     @JsonProperty(value = "description")
     public void setDescription(final String description) {
         this.description = ofNullable(description);
