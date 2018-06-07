@@ -12,6 +12,7 @@ import java.util.UUID;
 import static com.serpents.ipv6dns.utils.JooqField.*;
 import static com.serpents.ipv6dns.utils.JooqSchemaUtils.DOMAIN_DETAILS;
 import static com.serpents.ipv6dns.utils.JooqSchemaUtils.DOMAIN_REQUESTS;
+import static com.serpents.ipv6dns.utils.TimeUtils.nowAtUtc;
 import static org.jooq.impl.DSL.inline;
 import static org.jooq.impl.DSL.row;
 
@@ -69,7 +70,8 @@ public class DomainRequestsRepositoryImpl implements DomainRequestsRepository {
     public boolean updateStatus(final UUID requestId, final DomainRequestStatus newStatus) {
         final int updated =
                 context.update(DOMAIN_REQUESTS.getTable())
-                       .set(row(DOMAIN_REQUESTS.getField(STATUS)), row(inline(newStatus)))
+                       .set(row(DOMAIN_REQUESTS.getField(STATUS), DOMAIN_REQUESTS.getField(UPDATED_AT)),
+                            row(inline(newStatus), inline(nowAtUtc())))
                        .where(DOMAIN_REQUESTS.getField(ID).equal(inline(requestId)))
                        .execute();
 
