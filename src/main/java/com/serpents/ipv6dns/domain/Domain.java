@@ -1,14 +1,21 @@
 package com.serpents.ipv6dns.domain;
 
+import com.serpents.ipv6dns.address.Address;
+import com.serpents.ipv6dns.domain.request.DomainRequest;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 public class Domain {
-    private UUID id;
-    private UUID owner;
-    private DomainDetails domainDetails;
+    private final UUID id;
+    private final UUID owner;
+    private final DomainDetails domainDetails;
+    private final Address address;
+
+    public Domain(final DomainRequest request, final Address address) {
+        this(null, request.getClientId(), request.getDomainDetails(), address);
+    }
 }
