@@ -3,8 +3,6 @@ package com.serpents.ipv6dns.domain.request;
 import com.serpents.ipv6dns.domain.DomainDetails;
 import org.jooq.DSLContext;
 import org.jooq.Param;
-import org.jooq.Record6;
-import org.jooq.Select;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -27,24 +25,22 @@ public class DomainRequestsRepositoryImpl implements DomainRequestsRepository {
         this.context = context;
     }
 
-
     @Override
     public DomainRequest findById(final UUID requestId) {
-        final Select<Record6<UUID, DomainRequestStatus, UUID, UUID, String, String>> select =
-                context.select(DOMAIN_REQUESTS.getField(ID),
-                               DOMAIN_REQUESTS.getField(STATUS),
-                               DOMAIN_REQUESTS.getField(CLIENT_ID),
-                               DOMAIN_DETAILS.getField(ID),
-                               DOMAIN_DETAILS.getField(DOMAIN_NAME),
-                               DOMAIN_DETAILS.getField(DESCRIPTION))
-                       .from(DOMAIN_REQUESTS.getTable())
-                       .join(DOMAIN_DETAILS.getTable()).on(DOMAIN_REQUESTS.getField(DETAILS_ID).equal(DOMAIN_DETAILS.getField(ID)))
-                       .where(DOMAIN_DETAILS.getField(ID).equal(inline(requestId)));
 
-        return select.fetchOne(record -> {
-            final DomainDetails domainDetails = new DomainDetails(record.value4(), record.value5(), record.value6());
-            return new DomainRequest(record.value1(), record.value2(), record.value3(), domainDetails);
-        });
+        return context.select(DOMAIN_REQUESTS.getField(ID),
+                              DOMAIN_REQUESTS.getField(STATUS),
+                              DOMAIN_REQUESTS.getField(CLIENT_ID),
+                              DOMAIN_DETAILS.getField(ID),
+                              DOMAIN_DETAILS.getField(DOMAIN_NAME),
+                              DOMAIN_DETAILS.getField(DESCRIPTION))
+                      .from(DOMAIN_REQUESTS.getTable())
+                      .join(DOMAIN_DETAILS.getTable()).on(DOMAIN_REQUESTS.getField(DETAILS_ID).equal(DOMAIN_DETAILS.getField(ID)))
+                      .where(DOMAIN_DETAILS.getField(ID).equal(inline(requestId)))
+                      .fetchOne(record -> {
+                          final DomainDetails domainDetails = new DomainDetails(record.value4(), record.value5(), record.value6());
+                          return new DomainRequest(record.value1(), record.value2(), record.value3(), domainDetails);
+                      });
     }
 
     @Override
