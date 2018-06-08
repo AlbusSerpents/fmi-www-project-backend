@@ -1,10 +1,14 @@
 package com.serpents.ipv6dns.domain.request;
 
+import com.serpents.ipv6dns.domain.request.DomainRequest.Identifier;
+
 import java.util.UUID;
 
 public interface DomainRequestsRepository {
 
-    DomainRequest findById(final UUID requestId);
+    DomainRequest findByIdentifier(final Identifier identifier);
+
+    DomainRequest findById(final UUID id);
 
     DomainRequestResponse insert(final DomainRequest request);
 

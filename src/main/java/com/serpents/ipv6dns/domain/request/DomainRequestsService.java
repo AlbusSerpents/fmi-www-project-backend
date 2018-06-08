@@ -6,6 +6,7 @@ import com.serpents.ipv6dns.domain.Domain;
 import com.serpents.ipv6dns.domain.DomainCreatedResponse;
 import com.serpents.ipv6dns.domain.DomainDetails;
 import com.serpents.ipv6dns.domain.DomainRepository;
+import com.serpents.ipv6dns.domain.request.DomainRequest.Identifier;
 import com.serpents.ipv6dns.exception.ObjectNotInTheCorrectStateException;
 import com.serpents.ipv6dns.exception.UnauthorizedOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +39,17 @@ public class DomainRequestsService {
     }
 
     @Transactional
-    public void cancelRequest(final UUID requestId, final UUID clientId) {
-        final DomainRequest request = requestsRepository.findById(requestId);
-        if (!clientId.equals(request.getClientId())) {
-            throw new UnauthorizedOperationException("Request can't be cancelled");
+    public DomainRequest readByIdentifier(final Identifier identifier) {
+        return requestsRepository.findByIdentifier(identifier);
+    }
+
+    @Transactional
+    public void cancelRequest(final Identifier identifier) {
+        final DomainRequest request = requestsRepository.findByIdentifier(identifier);
+        if (request != null) {
+            updateRequest(identifier.getRequestId(), CANCELED);
         } else {
-            updateRequest(requestId, CANCELED);
+            throw new UnauthorizedOperationException("Request can't be cancelled");
         }
     }
 

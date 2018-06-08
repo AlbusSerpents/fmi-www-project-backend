@@ -9,5 +9,4 @@ import java.util.UUID;
 @AllArgsConstructor
 public class DomainCreatedResponse {
     private final UUID domainId;
-    private final String domainName;
 }

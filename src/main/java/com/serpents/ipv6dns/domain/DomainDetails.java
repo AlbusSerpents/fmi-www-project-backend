@@ -28,4 +28,13 @@ public class DomainDetails {
     public void setDescription(final String description) {
         this.description = ofNullable(description);
     }
+
+    public Optional<String> description() {
+        return description;
+    }
+
+    @JsonProperty(value = "description")
+    public String getDescription() {
+        return this.description.orElse(null);
+    }
 }

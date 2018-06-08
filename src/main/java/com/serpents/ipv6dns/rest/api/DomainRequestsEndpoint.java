@@ -2,6 +2,8 @@ package com.serpents.ipv6dns.rest.api;
 
 import com.serpents.ipv6dns.domain.DomainCreatedResponse;
 import com.serpents.ipv6dns.domain.DomainDetails;
+import com.serpents.ipv6dns.domain.request.DomainRequest;
+import com.serpents.ipv6dns.domain.request.DomainRequest.Identifier;
 import com.serpents.ipv6dns.domain.request.DomainRequestApproval;
 import com.serpents.ipv6dns.domain.request.DomainRequestResponse;
 import com.serpents.ipv6dns.domain.request.DomainRequestsService;
@@ -13,10 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.UUID;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequestMapping(value = "/request")
@@ -38,19 +38,29 @@ public class DomainRequestsEndpoint {
         return service.requestDomain(userId, domainDetails);
     }
 
+    @ResponseStatus(OK)
+    @RequestMapping(value = "/{requestId}", method = GET, produces = "application/json")
+    public DomainRequest getRequest(
+            final @AuthenticationPrincipal UserDetailsImpl details,
+            final @PathVariable(name = "requestId") UUID requestId) {
+        final Identifier identifier = new Identifier(requestId, details.getUserId());
+        return service.readByIdentifier(identifier);
+    }
+
     @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/{requestId}", method = DELETE)
     public void cancelDomainRequest(
             final @AuthenticationPrincipal UserDetailsImpl details,
             final @PathVariable(name = "requestId") UUID requestId) {
-        service.cancelRequest(requestId, details.getUserId());
+        final Identifier identifier = new Identifier(requestId, details.getUserId());
+        service.cancelRequest(identifier);
     }
 
     @ResponseStatus(CREATED)
     @RequestMapping(value = "/{requestId}/approve", method = POST, consumes = "application/json")
     public DomainCreatedResponse approveDomainRequest(
             final @PathVariable(name = "requestId") UUID requestId,
-            final @RequestBody @Valid DomainRequestApproval approval) {
+            final @RequestBody DomainRequestApproval approval) {
         return service.approveRequest(requestId, approval);
     }
 

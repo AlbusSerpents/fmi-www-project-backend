@@ -1,6 +1,8 @@
 package com.serpents.ipv6dns.domain.request;
 
 import com.serpents.ipv6dns.domain.DomainDetails;
+import com.serpents.ipv6dns.domain.request.DomainRequest.Identifier;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Param;
 import org.jooq.impl.DSL;
@@ -27,8 +29,22 @@ public class DomainRequestsRepositoryImpl implements DomainRequestsRepository {
     }
 
     @Override
-    public DomainRequest findById(final UUID requestId) {
+    public DomainRequest findByIdentifier(final Identifier identifier) {
+        final Condition identifierCondition =
+                DOMAIN_REQUESTS.getField(ID).equal(inline(identifier.getRequestId()))
+                               .and(DOMAIN_REQUESTS.getField(CLIENT_ID).equal(identifier.getClientId()));
 
+        return findByCondition(identifierCondition);
+    }
+
+    @Override
+    public DomainRequest findById(final UUID id) {
+        final Condition identifierCondition = DOMAIN_REQUESTS.getField(ID).equal(inline(id));
+
+        return findByCondition(identifierCondition);
+    }
+
+    private DomainRequest findByCondition(final Condition condition) {
         return context.select(DOMAIN_REQUESTS.getField(ID),
                               DOMAIN_REQUESTS.getField(STATUS),
                               DOMAIN_REQUESTS.getField(CLIENT_ID),
@@ -37,17 +53,18 @@ public class DomainRequestsRepositoryImpl implements DomainRequestsRepository {
                               DOMAIN_DETAILS.getField(DESCRIPTION))
                       .from(DOMAIN_REQUESTS.getTable())
                       .join(DOMAIN_DETAILS.getTable()).on(DOMAIN_REQUESTS.getField(DETAILS_ID).equal(DOMAIN_DETAILS.getField(ID)))
-                      .where(DOMAIN_DETAILS.getField(ID).equal(inline(requestId)))
+                      .where(condition)
                       .fetchOne(record -> {
                           final DomainDetails domainDetails = new DomainDetails(record.value4(), record.value5(), record.value6());
-                          return new DomainRequest(record.value1(), record.value2(), record.value3(), domainDetails);
+                          return new DomainRequest(record.value1(), DomainRequestStatus.valueOf(record.value2()), record.value3(), domainDetails);
                       });
+
     }
 
     @Override
     public DomainRequestResponse insert(final DomainRequest request) {
         final DomainDetails details = request.getDomainDetails();
-        final Param<String> detailsValue = details.getDescription().map(DSL::inline).orElse(inline(""));
+        final Param<String> detailsValue = details.description().map(DSL::inline).orElse(inline((String) null));
 
         final UUID detailsId =
                 context.insertInto(DOMAIN_DETAILS.getTable(), DOMAIN_DETAILS.getField(DOMAIN_NAME), DOMAIN_DETAILS.getField(DESCRIPTION))
@@ -58,7 +75,7 @@ public class DomainRequestsRepositoryImpl implements DomainRequestsRepository {
 
         final UUID requestId =
                 context.insertInto(DOMAIN_REQUESTS.getTable(), DOMAIN_REQUESTS.getField(STATUS), DOMAIN_REQUESTS.getField(CLIENT_ID), DOMAIN_REQUESTS.getField(DETAILS_ID))
-                       .values(inline(request.getStatus()), inline(request.getClientId()), inline(detailsId))
+                       .values(inline(request.getStatus().name()), inline(request.getClientId()), inline(detailsId))
                        .returning(DOMAIN_REQUESTS.getField(ID))
                        .fetchOne()
                        .get(DOMAIN_REQUESTS.getField(ID));
@@ -71,7 +88,7 @@ public class DomainRequestsRepositoryImpl implements DomainRequestsRepository {
         final int updated =
                 context.update(DOMAIN_REQUESTS.getTable())
                        .set(row(DOMAIN_REQUESTS.getField(STATUS), DOMAIN_REQUESTS.getField(UPDATED_AT)),
-                            row(inline(newStatus), inline(nowAtUtc())))
+                            row(inline(newStatus.name()), inline(nowAtUtc())))
                        .where(DOMAIN_REQUESTS.getField(ID).equal(inline(requestId)))
                        .execute();
 

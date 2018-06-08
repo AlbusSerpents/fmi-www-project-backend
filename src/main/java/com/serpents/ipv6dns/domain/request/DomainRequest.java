@@ -26,4 +26,11 @@ public class DomainRequest {
         this.domainDetails = domainDetails;
     }
 
+    @Data
+    @AllArgsConstructor
+    public static final class Identifier {
+        private final UUID requestId;
+        private final UUID clientId;
+    }
+
 }

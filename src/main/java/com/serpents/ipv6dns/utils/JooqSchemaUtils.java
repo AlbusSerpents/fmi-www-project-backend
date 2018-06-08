@@ -1,13 +1,12 @@
 package com.serpents.ipv6dns.utils;
 
-import com.serpents.ipv6dns.domain.request.DomainRequestStatus;
 import org.jooq.Field;
+import org.jooq.Name;
 import org.jooq.Table;
+import org.jooq.impl.DSL;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import static com.serpents.ipv6dns.utils.JooqField.*;
 import static org.jooq.impl.DSL.field;
@@ -15,51 +14,60 @@ import static org.jooq.impl.DSL.table;
 
 public enum JooqSchemaUtils {
 
-    DOMAIN_DETAILS(table("domain_details").as("dd")) {
+    DOMAIN_DETAILS(table("domain_details")) {
         @Override
-        protected Map<JooqField, Field<?>> loadFieldsMap() {
-            final Map<JooqField, Field<?>> fieldsMap = new HashMap<>();
+        protected Map<JooqField<?>, Name> loadFieldsMap() {
+            final Map<JooqField<?>, Name> fieldsMap = new HashMap<>();
 
-            fieldsMap.put(ID, field("dd.id", UUID.class));
-            fieldsMap.put(DOMAIN_NAME, field("dd.domain_name", String.class));
-            fieldsMap.put(DESCRIPTION, field("dd.description", String.class));
+            fieldsMap.put(ID, DSL.name("id"));
+            fieldsMap.put(DOMAIN_NAME, DSL.name("domain_name"));
+            fieldsMap.put(DESCRIPTION, DSL.name("description"));
 
             return fieldsMap;
         }
     },
-    DOMAIN_REQUESTS(table("domain_requests").as("dr")) {
+    DOMAIN_REQUESTS(table("domain_requests")) {
         @Override
-        protected Map<JooqField, Field<?>> loadFieldsMap() {
-            final Map<JooqField, Field<?>> fieldsMap = new HashMap<>();
+        protected Map<JooqField<?>, Name> loadFieldsMap() {
+            final Map<JooqField<?>, Name> fieldsMap = new HashMap<>();
 
-            fieldsMap.put(ID, field("dr.id", UUID.class));
-            fieldsMap.put(CLIENT_ID, field("dr.client_id", UUID.class));
-            fieldsMap.put(UPDATED_AT, field("dr.updated_at", LocalDateTime.class));
-            fieldsMap.put(STATUS, field("dr.status", DomainRequestStatus.class));
-            fieldsMap.put(DETAILS_ID, field("dr.domain_details_id", UUID.class));
+            fieldsMap.put(ID, DSL.name("id"));
+            fieldsMap.put(CLIENT_ID, DSL.name("client_id"));
+            fieldsMap.put(UPDATED_AT, DSL.name("updated_at"));
+            fieldsMap.put(STATUS, DSL.name("status"));
+            fieldsMap.put(DETAILS_ID, DSL.name("domain_details_id"));
 
             return fieldsMap;
         }
     },
-    ADDRESSES(table("free_addresses").as("a")) {
+    ADDRESSES(table("free_addresses")) {
         @Override
-        protected Map<JooqField, Field<?>> loadFieldsMap() {
-            final Map<JooqField, Field<?>> fieldsMap = new HashMap<>();
+        protected Map<JooqField<?>, Name> loadFieldsMap() {
+            final Map<JooqField<?>, Name> fieldsMap = new HashMap<>();
 
-            fieldsMap.put(ID, field("a.id", UUID.class));
-            fieldsMap.put(ADDRESS, field("a.address", String.class))
-            ;
+            fieldsMap.put(ID, DSL.name("id"));
+            fieldsMap.put(ADDRESS, DSL.name("address"));
             return fieldsMap;
         }
     },
-    FREE_ADDRESSES(table("free_addresses").as("fa")) {
+    FREE_ADDRESSES(table("free_addresses")) {
         @Override
-        protected Map<JooqField, Field<?>> loadFieldsMap() {
-            final Map<JooqField, Field<?>> fieldsMap = new HashMap<>();
+        protected Map<JooqField<?>, Name> loadFieldsMap() {
+            final Map<JooqField<?>, Name> fieldsMap = new HashMap<>();
 
-            fieldsMap.put(ID, field("fa.id", UUID.class));
-            fieldsMap.put(ADDRESS, field("fa.address", String.class))
-            ;
+            fieldsMap.put(ID, DSL.name("id"));
+            fieldsMap.put(ADDRESS, DSL.name("address"));
+            return fieldsMap;
+        }
+    },
+    DOMAINS(table("domains")) {
+        @Override
+        protected Map<JooqField<?>, Name> loadFieldsMap() {
+            final Map<JooqField<?>, Name> fieldsMap = new HashMap<>();
+
+            fieldsMap.put(ID, DSL.name("id"));
+            fieldsMap.put(OWNER, DSL.name("owner"));
+            fieldsMap.put(DETAILS_ID, DSL.name("domain_details_id"));
             return fieldsMap;
         }
     };
@@ -71,17 +79,23 @@ public enum JooqSchemaUtils {
     }
 
     private final Table<?> jooqTable;
-    private final Map<JooqField, Field<?>> fields;
+    private final Map<JooqField<?>, Name> fields;
 
-    protected abstract Map<JooqField, Field<?>> loadFieldsMap();
+    protected abstract Map<JooqField<?>, Name> loadFieldsMap();
 
     public Table<?> getTable() {
         return jooqTable;
     }
 
-    @SuppressWarnings("unchecked")
+
     public <T> Field<T> getField(final JooqField<T> field) {
-        return (Field<T>) fields.get(field);
+        return getField(field, true);
+    }
+
+    public <T> Field<T> getField(final JooqField<T> field, final boolean qualified) {
+        final Name fieldName = fields.get(field);
+        final Name fullName = qualified ? DSL.name(getTable().getName(), fieldName.first()) : fieldName;
+        return field(fullName, field.getFieldClass());
     }
 
 }

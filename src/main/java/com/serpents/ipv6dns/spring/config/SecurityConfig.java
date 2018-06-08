@@ -66,8 +66,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             // Create domain request
             .regexMatchers(POST, "request").hasAnyAuthority(CLIENT_USER.getAuthority())
 
-            // Cancel domain request
+            // Read or Cancel domain request
             .regexMatchers(DELETE, "request/.*").hasAnyAuthority(CLIENT_USER.getAuthority())
+            .regexMatchers(GET, "request/.*").hasAnyAuthority(CLIENT_USER.getAuthority())
 
             // Approve domain requests
             .regexMatchers(POST, "request/.*/approve").hasAnyAuthority(ADMIN_USER.getAuthority())
