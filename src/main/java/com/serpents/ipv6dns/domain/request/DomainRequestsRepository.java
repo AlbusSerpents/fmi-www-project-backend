@@ -12,5 +12,9 @@ public interface DomainRequestsRepository {
 
     DomainRequestResponse insert(final DomainRequest request);
 
-    boolean updateStatus(final UUID requestId, final DomainRequestStatus newStatus);
+    boolean approve(final UUID id);
+
+    boolean reject(final UUID id);
+
+    boolean cancel(final Identifier identifier);
 }

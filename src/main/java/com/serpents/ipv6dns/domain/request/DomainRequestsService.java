@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static com.serpents.ipv6dns.domain.request.DomainRequestStatus.*;
+import static com.serpents.ipv6dns.domain.request.DomainRequestStatus.SENT;
 
 @Service
 public class DomainRequestsService {
@@ -46,11 +46,10 @@ public class DomainRequestsService {
 
     @Transactional
     public void cancelRequest(final Identifier identifier) {
-        final DomainRequest request = requestsRepository.findByIdentifier(identifier);
-        if (request != null) {
-            updateRequest(identifier.getRequestId(), CANCELED);
-        } else {
-            throw new UnauthorizedOperationException("Request can't be cancelled");
+        final boolean success = requestsRepository.cancel(identifier);
+        if (!success) {
+            final String message = String.format("Couldn't cancel request %s ", identifier.getRequestId());
+            throw new UnauthorizedOperationException(message);
         }
     }
 
@@ -64,7 +63,7 @@ public class DomainRequestsService {
         final DomainRequest request = requestsRepository.findById(requestId);
         final Domain domain = new Domain(request, address);
 
-        updateRequest(requestId, APPROVED);
+        approveRequest(requestId);
         return domainRepository.insert(domain);
     }
 
@@ -74,13 +73,17 @@ public class DomainRequestsService {
 
     @Transactional
     public void rejectRequest(final UUID requestId) {
-        updateRequest(requestId, REJECTED);
+        final boolean success = requestsRepository.reject(requestId);
+        if (!success) {
+            final String message = String.format("Couldn't reject request %s", requestId);
+            throw new RuntimeException(message);
+        }
     }
 
-    private void updateRequest(final UUID requestId, final DomainRequestStatus status) {
-        final boolean succeeded = requestsRepository.updateStatus(requestId, status);
+    private void approveRequest(final UUID requestId) {
+        final boolean succeeded = requestsRepository.approve(requestId);
         if (!succeeded) {
-            final String message = String.format("Couldn't update request: %s with status: %s", requestId.toString(), status.toString());
+            final String message = String.format("Couldn't approve request: %s", requestId);
             throw new ObjectNotInTheCorrectStateException(message);
         }
     }
