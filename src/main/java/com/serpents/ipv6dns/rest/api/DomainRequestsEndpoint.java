@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.*;
@@ -32,10 +33,16 @@ public class DomainRequestsEndpoint {
     @ResponseStatus(CREATED)
     @RequestMapping(value = "", method = POST, consumes = "application/json", produces = "application/json")
     public DomainRequestResponse requestDomain(
-            final @AuthenticationPrincipal UserDetailsImpl userDetails,
+            final @AuthenticationPrincipal UserDetailsImpl details,
             final @RequestBody @Valid DomainDetails domainDetails) {
-        final UUID userId = userDetails.getUserId();
+        final UUID userId = details.getUserId();
         return service.requestDomain(userId, domainDetails);
+    }
+
+    @ResponseStatus(OK)
+    @RequestMapping(value = "", method = GET, produces = "application/json")
+    public List<DomainRequest> getPending() {
+        return service.listPending();
     }
 
     @ResponseStatus(OK)
@@ -53,7 +60,7 @@ public class DomainRequestsEndpoint {
             final @AuthenticationPrincipal UserDetailsImpl details,
             final @PathVariable(name = "requestId") UUID requestId) {
         final Identifier identifier = new Identifier(requestId, details.getUserId());
-        service.cancelRequest(identifier);
+        service.cancel(identifier);
     }
 
     @ResponseStatus(CREATED)
@@ -61,7 +68,7 @@ public class DomainRequestsEndpoint {
     public DomainCreatedResponse approve(
             final @PathVariable(name = "requestId") UUID requestId,
             final @RequestBody DomainRequestApproval approval) {
-        return service.approveRequest(requestId, approval);
+        return service.approve(requestId, approval);
     }
 
     @ResponseStatus(NO_CONTENT)

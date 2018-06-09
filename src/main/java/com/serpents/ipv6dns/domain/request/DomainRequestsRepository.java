@@ -2,11 +2,12 @@ package com.serpents.ipv6dns.domain.request;
 
 import com.serpents.ipv6dns.domain.request.DomainRequest.Identifier;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface DomainRequestsRepository {
 
-    DomainRequest findByIdentifier(final Identifier identifier);
+    List<DomainRequest> findPending();
 
     DomainRequest findById(final UUID id);
 

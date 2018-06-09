@@ -14,13 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 import static com.serpents.ipv6dns.domain.request.DomainRequestStatus.SENT;
 
 @Service
 public class DomainRequestsService {
-
 
     private final DomainRequestsRepository requestsRepository;
     private final DomainRepository domainRepository;
@@ -40,12 +40,26 @@ public class DomainRequestsService {
     }
 
     @Transactional
-    public DomainRequest readByIdentifier(final Identifier identifier) {
-        return requestsRepository.findByIdentifier(identifier);
+    public List<DomainRequest> listPending() {
+        return requestsRepository.findPending();
     }
 
     @Transactional
-    public void cancelRequest(final Identifier identifier) {
+    public DomainRequest readByIdentifier(final Identifier identifier) {
+        final UUID requestId = identifier.getRequestId();
+        final UUID clientId = identifier.getClientId();
+        final DomainRequest request = requestsRepository.findById(requestId);
+
+        if (request.getClientId().equals(clientId)) {
+            return request;
+        } else {
+            final String message = String.format("Request %s not found", requestId);
+            throw new UnauthorizedOperationException(message);
+        }
+    }
+
+    @Transactional
+    public void cancel(final Identifier identifier) {
         final boolean success = requestsRepository.cancel(identifier);
         if (!success) {
             final String message = String.format("Couldn't cancel request %s ", identifier.getRequestId());
@@ -54,7 +68,7 @@ public class DomainRequestsService {
     }
 
     @Transactional
-    public DomainCreatedResponse approveRequest(final UUID requestId, final DomainRequestApproval approval) {
+    public DomainCreatedResponse approve(final UUID requestId, final DomainRequestApproval approval) {
         final Address address = approval
                 .getAddressId()
                 .map(addressesRepository::findById)
@@ -71,20 +85,20 @@ public class DomainRequestsService {
         return addressesRepository.findFree().orElseThrow(OutOfAddressSpaceException::new);
     }
 
+    private void approveRequest(final UUID requestId) {
+        final boolean succeeded = requestsRepository.approve(requestId);
+        if (!succeeded) {
+            final String message = String.format("Couldn't approve request: %s", requestId);
+            throw new ObjectNotInTheCorrectStateException(message);
+        }
+    }
+
     @Transactional
     public void rejectRequest(final UUID requestId) {
         final boolean success = requestsRepository.reject(requestId);
         if (!success) {
             final String message = String.format("Couldn't reject request %s", requestId);
             throw new RuntimeException(message);
-        }
-    }
-
-    private void approveRequest(final UUID requestId) {
-        final boolean succeeded = requestsRepository.approve(requestId);
-        if (!succeeded) {
-            final String message = String.format("Couldn't approve request: %s", requestId);
-            throw new ObjectNotInTheCorrectStateException(message);
         }
     }
 

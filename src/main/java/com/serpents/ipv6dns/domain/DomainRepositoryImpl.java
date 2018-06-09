@@ -14,7 +14,7 @@ import static org.jooq.impl.DSL.inline;
 @Repository
 public class DomainRepositoryImpl implements DomainRepository {
 
-    private DSLContext context;
+    private final DSLContext context;
 
     @Autowired
     public DomainRepositoryImpl(final DSLContext context) {
