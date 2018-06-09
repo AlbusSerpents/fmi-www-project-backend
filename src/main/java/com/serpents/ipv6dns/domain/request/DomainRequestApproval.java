@@ -8,12 +8,13 @@ import org.hibernate.validator.constraints.NotBlank;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 @Data
 @NoArgsConstructor
 public class DomainRequestApproval {
-    private Optional<UUID> addressId;
+    private Optional<UUID> addressId = empty();
 
     @NotBlank
     @JsonProperty("ipAddress")
