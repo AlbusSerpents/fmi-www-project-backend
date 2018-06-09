@@ -49,7 +49,7 @@ public class DomainRequestsEndpoint {
 
     @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/{requestId}", method = DELETE)
-    public void cancelDomainRequest(
+    public void cancel(
             final @AuthenticationPrincipal UserDetailsImpl details,
             final @PathVariable(name = "requestId") UUID requestId) {
         final Identifier identifier = new Identifier(requestId, details.getUserId());
@@ -58,7 +58,7 @@ public class DomainRequestsEndpoint {
 
     @ResponseStatus(CREATED)
     @RequestMapping(value = "/{requestId}/approve", method = POST, consumes = "application/json")
-    public DomainCreatedResponse approveDomainRequest(
+    public DomainCreatedResponse approve(
             final @PathVariable(name = "requestId") UUID requestId,
             final @RequestBody DomainRequestApproval approval) {
         return service.approveRequest(requestId, approval);
@@ -66,7 +66,7 @@ public class DomainRequestsEndpoint {
 
     @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/{requestId}/reject", method = POST)
-    public void rejectDomainRequest(final @PathVariable(name = "requestId") UUID requestId) {
+    public void reject(final @PathVariable(name = "requestId") UUID requestId) {
         service.rejectRequest(requestId);
     }
 }
