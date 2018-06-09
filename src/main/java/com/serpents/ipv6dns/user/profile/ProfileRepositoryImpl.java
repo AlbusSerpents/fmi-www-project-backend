@@ -28,7 +28,7 @@ public class ProfileRepositoryImpl implements ProfileRepository {
     private final Table<?> clientUsersView = table("client_users");
     private final Table<?> adminUsersView = table("admin_users");
 
-    private DSLContext context;
+    private final DSLContext context;
 
     @Autowired
     public ProfileRepositoryImpl(final DSLContext context) {

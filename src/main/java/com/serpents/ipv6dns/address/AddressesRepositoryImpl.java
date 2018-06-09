@@ -21,7 +21,7 @@ public class AddressesRepositoryImpl implements AddressesRepository {
     private static final RecordMapper<Record2<UUID, String>, Address> ADDRESS_MAPPER =
             record -> new Address(record.value1(), record.value2());
 
-    private DSLContext context;
+    private final DSLContext context;
 
     @Autowired
     public AddressesRepositoryImpl(final DSLContext context) {
