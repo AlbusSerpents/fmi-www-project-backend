@@ -60,23 +60,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             // logout
             .regexMatchers(DELETE, "/auth").hasAuthority(BASE_USER.getAuthority())
 
+            // Addresses
+            .regexMatchers("addresses.*").hasAnyAuthority(ADMIN_USER.getAuthority())
+
             // Delete profile
             .regexMatchers(DELETE, "user/.*").hasAuthority(CLIENT_USER.getAuthority())
 
-            // Create domain request
+            // Create, read or cancel request
             .regexMatchers(POST, "request").hasAnyAuthority(CLIENT_USER.getAuthority())
-
-            // Read or Cancel domain request
             .regexMatchers(DELETE, "request/.*").hasAnyAuthority(CLIENT_USER.getAuthority())
             .regexMatchers(GET, "request/.*").hasAnyAuthority(CLIENT_USER.getAuthority())
 
-            // Approve domain requests
+            // Read pending, reject and approve request
+            .regexMatchers(GET, "request").hasAnyAuthority(ADMIN_USER.getAuthority())
             .regexMatchers(POST, "request/.*/approve").hasAnyAuthority(ADMIN_USER.getAuthority())
-
-            // Reject domain requests
             .regexMatchers(POST, "request/.*/reject").hasAnyAuthority(ADMIN_USER.getAuthority())
 
-            // user profile requests
+            // user profile
             .regexMatchers("user/.*").hasAuthority(BASE_USER.getAuthority())
 
             // common

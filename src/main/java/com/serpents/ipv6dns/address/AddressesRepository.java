@@ -1,12 +1,14 @@
 package com.serpents.ipv6dns.address;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AddressesRepository {
 
-    Address findFreeAddress();
+    List<Address> findAllFree();
+
+    Optional<Address> findFree();
 
     Address findById(final UUID addressId);
-
-    Address findByValue(final String address);
 }

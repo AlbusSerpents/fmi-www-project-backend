@@ -1,18 +1,18 @@
 package com.serpents.ipv6dns.address;
 
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.Record2;
-import org.jooq.RecordMapper;
+import org.jooq.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.serpents.ipv6dns.utils.JooqField.ADDRESS;
 import static com.serpents.ipv6dns.utils.JooqField.ID;
 import static com.serpents.ipv6dns.utils.JooqSchemaUtils.ADDRESSES;
 import static com.serpents.ipv6dns.utils.JooqSchemaUtils.FREE_ADDRESSES;
+import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.inline;
 
 @Repository
@@ -29,31 +29,28 @@ public class AddressesRepositoryImpl implements AddressesRepository {
     }
 
     @Override
-    public Address findFreeAddress() {
-        return context.select(FREE_ADDRESSES.getField(ID), FREE_ADDRESSES.getField(ADDRESS))
-                      .from(FREE_ADDRESSES.getTable())
-                      .limit(0, 1)
-                      .fetchOne(ADDRESS_MAPPER);
+    public Optional<Address> findFree() {
+        return ofNullable(selectAllFreeAddresses().fetchAny(ADDRESS_MAPPER));
     }
 
     @Override
     public Address findById(final UUID addressId) {
         final Condition idCondition = ADDRESSES.getField(ID).equal(inline(addressId));
-        return findAddressByCondition(idCondition);
-    }
-
-    @Override
-    public Address findByValue(final String address) {
-        final Condition addressCondition = ADDRESSES.getField(ADDRESS).equal(inline(address));
-        return findAddressByCondition(addressCondition);
-    }
-
-    private Address findAddressByCondition(final Condition condition) {
         return context.select(ADDRESSES.getField(ID), ADDRESSES.getField(ADDRESS))
                       .from(ADDRESSES.getTable())
-                      .where(condition)
+                      .where(idCondition)
                       .fetchOne(ADDRESS_MAPPER);
     }
 
+    @Override
+    public List<Address> findAllFree() {
+        return selectAllFreeAddresses().fetch(ADDRESS_MAPPER);
+    }
+
+    private Select<Record2<UUID, String>> selectAllFreeAddresses() {
+        return context.select(FREE_ADDRESSES.getField(ID),
+                              FREE_ADDRESSES.getField(ADDRESS))
+                      .from(FREE_ADDRESSES.getTable());
+    }
 
 }

@@ -8,6 +8,7 @@ import com.serpents.ipv6dns.domain.DomainDetails;
 import com.serpents.ipv6dns.domain.DomainRepository;
 import com.serpents.ipv6dns.domain.request.DomainRequest.Identifier;
 import com.serpents.ipv6dns.exception.ObjectNotInTheCorrectStateException;
+import com.serpents.ipv6dns.exception.OutOfAddressSpaceException;
 import com.serpents.ipv6dns.exception.UnauthorizedOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,13 +59,17 @@ public class DomainRequestsService {
         final Address address = approval
                 .getAddressId()
                 .map(addressesRepository::findById)
-                .orElseGet(addressesRepository::findFreeAddress);
+                .orElseGet(this::freeAddress);
 
         final DomainRequest request = requestsRepository.findById(requestId);
         final Domain domain = new Domain(request, address);
 
         updateRequest(requestId, APPROVED);
         return domainRepository.insert(domain);
+    }
+
+    private Address freeAddress() {
+        return addressesRepository.findFree().orElseThrow(OutOfAddressSpaceException::new);
     }
 
     @Transactional
