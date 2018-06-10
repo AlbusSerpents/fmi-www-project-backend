@@ -2,10 +2,14 @@ package com.serpents.ipv6dns.rest.api;
 
 import com.serpents.ipv6dns.domain.Domain;
 import com.serpents.ipv6dns.domain.DomainInfo;
+import com.serpents.ipv6dns.domain.DomainService;
+import com.serpents.ipv6dns.domain.DomainsSearch;
 import com.serpents.ipv6dns.spring.user.details.UserDetailsImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,17 +21,24 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RequestMapping("/domain")
 public class DomainsEndpoint {
 
+    private final DomainService service;
+
+    @Autowired
+    public DomainsEndpoint(final DomainService service) {
+        this.service = service;
+    }
+
     @ResponseStatus(OK)
     @RequestMapping(value = "/view/{domainId}", method = GET, produces = "application/json")
     public DomainInfo getById(final @PathVariable(value = "domainId") UUID domainId) {
-        return null;
+        return service.readById(domainId);
     }
 
     @ResponseStatus(OK)
     @RequestMapping(value = "", method = GET, produces = "application/json")
     public DomainInfo getByCriteria(final @RequestParam(name = "name") String name,
                                     final @RequestParam(name = "address") String address) {
-        return null;
+        return service.readByCriteria(name, address);
     }
 
     @ResponseStatus(OK)
@@ -36,7 +47,7 @@ public class DomainsEndpoint {
             final @AuthenticationPrincipal UserDetailsImpl details,
             final @PathVariable(value = "clientId") UUID clientId) {
         validateUserId(details, clientId);
-        return null;
+        return service.readMy(clientId);
     }
 
     @ResponseStatus(OK)
@@ -46,13 +57,14 @@ public class DomainsEndpoint {
             final @PathVariable(value = "clientId") UUID clientId,
             final @PathVariable(value = "domainId") UUID domainId) {
         validateUserId(details, clientId);
-        return null;
+        return service.readMy(clientId, domainId);
     }
 
     @ResponseStatus(OK)
     @RequestMapping(value = "/all", method = GET, produces = "application/json")
-    public List<Domain> getAllDomains(final @RequestParam(value = "clientId", required = false) UUID clientId) {
-        return null;
+    public List<Domain> getAllDomains(
+            final @Valid DomainsSearch search) {
+        return service.readAll(search);
     }
 
 }
