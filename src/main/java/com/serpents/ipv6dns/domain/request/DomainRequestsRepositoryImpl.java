@@ -38,12 +38,12 @@ public class DomainRequestsRepositoryImpl implements DomainRequestsRepository {
 
     @Override
     public List<DomainRequest> findPending() {
-        return findByCondition(stausEquals(SENT)).fetch(MAPPER);
+        return selectByCondition(stausEquals(SENT)).fetch(MAPPER);
     }
 
     @Override
     public DomainRequest findById(final UUID id) {
-        return findByCondition(idEquals(id)).fetchOne(MAPPER);
+        return selectByCondition(idEquals(id)).fetchOne(MAPPER);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class DomainRequestsRepositoryImpl implements DomainRequestsRepository {
         return detailsId.map(detailsRepository::delete).orElse(false);
     }
 
-    private SelectConditionStep<Record6<UUID, String, UUID, UUID, String, String>> findByCondition(final Condition condition) {
+    private SelectConditionStep<Record6<UUID, String, UUID, UUID, String, String>> selectByCondition(final Condition condition) {
         return context.select(DOMAIN_REQUESTS.getField(ID),
                               DOMAIN_REQUESTS.getField(STATUS),
                               DOMAIN_REQUESTS.getField(CLIENT_ID),
