@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.serpents.ipv6dns.utils.JooqField.*;
 import static com.serpents.ipv6dns.utils.JooqSchemaUtils.*;
 import static com.serpents.ipv6dns.utils.JooqUtils.optionalFieldCondition;
+import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.inline;
 
 @Repository
@@ -33,8 +35,9 @@ public class DomainRepositoryImpl implements DomainRepository {
     }
 
     @Override
-    public DomainInfo findById(final UUID domainId) {
-        return findInfoByCondition(idCondition(domainId));
+    public Optional<DomainInfo> findById(final UUID domainId) {
+        final DomainInfo result = findInfoByCondition(idCondition(domainId));
+        return ofNullable(result);
     }
 
     @Override
@@ -48,9 +51,10 @@ public class DomainRepositoryImpl implements DomainRepository {
     }
 
     @Override
-    public Domain findByOwnerAndId(final UUID ownerId, final UUID domainId) {
+    public Optional<Domain> findByOwnerAndId(final UUID ownerId, final UUID domainId) {
         final Condition ownerIdCondition = ownerCondition(ownerId).and(idCondition(domainId));
-        return selectByCondition(ownerIdCondition).fetchOne(MAPPER);
+        final Domain result = selectByCondition(ownerIdCondition).fetchOne(MAPPER);
+        return ofNullable(result);
     }
 
     @Override
@@ -69,7 +73,7 @@ public class DomainRepositoryImpl implements DomainRepository {
     public List<Domain> findAll(final DomainsSearch search) {
         final Condition clientIdCondition = clientIdCondition(search.getClientId());
         final Condition nameCondition = nameCondition(search.getName());
-        final Condition addressCondition = nameCondition(search.getAddress());
+        final Condition addressCondition = addressCondition(search.getAddress());
         final Condition finalCondition = clientIdCondition.and(nameCondition).and(addressCondition);
         return selectByCondition(finalCondition).fetch(MAPPER);
     }

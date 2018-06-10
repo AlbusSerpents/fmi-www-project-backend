@@ -40,7 +40,7 @@ public enum JooqSchemaUtils {
             return fieldsMap;
         }
     },
-    ADDRESSES(table("free_addresses")) {
+    ADDRESSES(table("addresses")) {
         @Override
         protected Map<JooqField<?>, Name> loadFieldsMap() {
             final Map<JooqField<?>, Name> fieldsMap = new HashMap<>();
@@ -71,7 +71,6 @@ public enum JooqSchemaUtils {
             return fieldsMap;
         }
     };
-
 
     JooqSchemaUtils(final Table<?> table) {
         this.jooqTable = table;

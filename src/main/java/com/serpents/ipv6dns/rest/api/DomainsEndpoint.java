@@ -36,8 +36,8 @@ public class DomainsEndpoint {
 
     @ResponseStatus(OK)
     @RequestMapping(value = "", method = GET, produces = "application/json")
-    public DomainInfo getByCriteria(final @RequestParam(name = "name") String name,
-                                    final @RequestParam(name = "address") String address) {
+    public DomainInfo getByCriteria(final @RequestParam(name = "name", required = false) String name,
+                                    final @RequestParam(name = "address", required = false) String address) {
         return service.readByCriteria(name, address);
     }
 
