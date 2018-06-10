@@ -1,5 +1,7 @@
-package com.serpents.ipv6dns.user.registration;
+package com.serpents.ipv6dns.repo.impl;
 
+import com.serpents.ipv6dns.user.registration.RegistrationRepository;
+import com.serpents.ipv6dns.user.registration.RegistrationRequest;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Table;

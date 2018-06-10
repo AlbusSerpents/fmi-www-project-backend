@@ -1,5 +1,7 @@
-package com.serpents.ipv6dns.address;
+package com.serpents.ipv6dns.repo.impl;
 
+import com.serpents.ipv6dns.address.Address;
+import com.serpents.ipv6dns.address.AddressesRepository;
 import org.jooq.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

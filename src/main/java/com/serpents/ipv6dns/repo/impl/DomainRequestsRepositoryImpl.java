@@ -1,8 +1,12 @@
-package com.serpents.ipv6dns.domain.request;
+package com.serpents.ipv6dns.repo.impl;
 
 import com.serpents.ipv6dns.domain.DomainDetails;
 import com.serpents.ipv6dns.domain.DomainDetailsRepository;
+import com.serpents.ipv6dns.domain.request.DomainRequest;
 import com.serpents.ipv6dns.domain.request.DomainRequest.Identifier;
+import com.serpents.ipv6dns.domain.request.DomainRequestResponse;
+import com.serpents.ipv6dns.domain.request.DomainRequestStatus;
+import com.serpents.ipv6dns.domain.request.DomainRequestsRepository;
 import org.jooq.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

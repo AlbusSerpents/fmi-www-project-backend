@@ -1,6 +1,9 @@
-package com.serpents.ipv6dns.user.profile;
+package com.serpents.ipv6dns.repo.impl;
 
 import com.serpents.ipv6dns.credentials.UserRole;
+import com.serpents.ipv6dns.user.profile.AdminProfile;
+import com.serpents.ipv6dns.user.profile.ClientProfile;
+import com.serpents.ipv6dns.user.profile.ProfileRepository;
 import com.serpents.ipv6dns.user.profile.ProfileUpdateRequest.ChangePasswordRequest;
 import org.jooq.DSLContext;
 import org.jooq.Field;

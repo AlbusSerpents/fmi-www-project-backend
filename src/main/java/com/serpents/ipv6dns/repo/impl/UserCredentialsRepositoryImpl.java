@@ -1,5 +1,7 @@
-package com.serpents.ipv6dns.credentials;
+package com.serpents.ipv6dns.repo.impl;
 
+import com.serpents.ipv6dns.credentials.UserCredentials;
+import com.serpents.ipv6dns.credentials.UserCredentialsRepository;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Param;
