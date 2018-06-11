@@ -3,15 +3,13 @@ package com.serpents.ipv6dns.repo.impl;
 import com.serpents.ipv6dns.credentials.UserCredentials;
 import com.serpents.ipv6dns.credentials.UserCredentialsRepository;
 import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Param;
-import org.jooq.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
-
-import static org.jooq.impl.DSL.*;
+import static com.serpents.ipv6dns.utils.JooqField.*;
+import static com.serpents.ipv6dns.utils.JooqSchemaUtils.ADMIN_USERS;
+import static com.serpents.ipv6dns.utils.JooqSchemaUtils.CLIENT_USERS;
+import static org.jooq.impl.DSL.inline;
 
 @Repository
 class UserCredentialsRepositoryImpl implements UserCredentialsRepository {
@@ -25,28 +23,23 @@ class UserCredentialsRepositoryImpl implements UserCredentialsRepository {
 
     @Override
     public UserCredentials findAdmin(final String username) {
-        final Table<?> adminsTable = table("admin_users");
-        final Param<Boolean> isBlockedField = inline(false);
-
-        return findFromUserTableByUsername(adminsTable, username, isBlockedField);
+        return context.select(ADMIN_USERS.getField(ID),
+                              ADMIN_USERS.getField(USERNAME),
+                              ADMIN_USERS.getField(PASSWORD))
+                      .from(ADMIN_USERS.getTable())
+                      .where(ADMIN_USERS.getField(USERNAME).equal(inline(username)))
+                      .fetchOne(record -> new UserCredentials(record.value1(), record.value2(), record.value3(), false));
     }
 
     @Override
     public UserCredentials findClient(final String username) {
-        final Table<?> clientsTable = table("client_users");
-        final Field<Boolean> isBlockedField = field("is_blocked", Boolean.class);
-
-        return findFromUserTableByUsername(clientsTable, username, isBlockedField);
-    }
-
-    private UserCredentials findFromUserTableByUsername(final Table<?> table, final String username, final Field<Boolean> isBlockedField) {
-        final Field<UUID> userIdField = field("id", UUID.class);
-        final Field<String> usernameField = field("username", String.class);
-        final Field<String> passwordField = field("password", String.class);
-
-        return context.select(userIdField, usernameField, passwordField, isBlockedField)
-                      .from(table)
-                      .where(usernameField.equal(inline(username)))
+        return context.select(CLIENT_USERS.getField(ID),
+                              CLIENT_USERS.getField(USERNAME),
+                              CLIENT_USERS.getField(PASSWORD),
+                              CLIENT_USERS.getField(IS_BLOCKED))
+                      .from(CLIENT_USERS.getTable())
+                      .where(CLIENT_USERS.getField(USERNAME).equal(inline(username)))
                       .fetchOne(record -> new UserCredentials(record.value1(), record.value2(), record.value3(), record.value4()));
     }
+
 }
