@@ -6,9 +6,13 @@ import java.util.UUID;
 
 public interface ProfileRepository {
 
-    ClientProfile findClient(final UUID id);
+    ClientMyProfile findMyClientProfileById(final UUID id);
 
-    AdminProfile findAdmin(final UUID id);
+    ClientProfile findClientById(final UUID id);
+
+    AdminMyProfile findMyAdminProfileById(final UUID id);
+
+    Profile findAdminById(final UUID id);
 
     boolean updateClientEmail(final UUID id, final String email);
 

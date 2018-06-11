@@ -9,11 +9,11 @@ import java.util.UUID;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class ClientProfile extends Profile {
-    private final Integer facultyNumber;
+public class AdminMyProfile extends Profile {
+    private final String username;
 
-    public ClientProfile(final UUID id, final String name, final String email, final Integer facultyNumber) {
+    public AdminMyProfile(final UUID id, final String username, final String name, final String email) {
         super(id, name, email);
-        this.facultyNumber = facultyNumber;
+        this.username = username;
     }
 }

@@ -25,13 +25,26 @@ public class ProfileService {
     }
 
     @Transactional
-    public Profile getProfile(final UUID userId, final Optional<UserRole> optionalRole) {
+    public Profile getMyProfile(final UUID userId, final Optional<UserRole> optionalRole) {
         final UserRole role = getRole(optionalRole);
         switch (role) {
             case ADMIN:
-                return repository.findAdmin(userId);
+                return repository.findMyAdminProfileById(userId);
             case CLIENT:
-                return repository.findClient(userId);
+                return repository.findMyClientProfileById(userId);
+            default:
+                throw new RuntimeException("Unreachable");
+        }
+    }
+
+    @Transactional
+    public Profile viewProfile(final UUID userId, final Optional<UserRole> optionalRole) {
+        final UserRole role = getRole(optionalRole);
+        switch (role) {
+            case ADMIN:
+                return repository.findAdminById(userId);
+            case CLIENT:
+                return repository.findClientById(userId);
             default:
                 throw new RuntimeException("Unreachable");
         }

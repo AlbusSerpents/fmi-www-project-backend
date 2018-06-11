@@ -1,10 +1,9 @@
 package com.serpents.ipv6dns.repo.impl;
 
-import com.serpents.ipv6dns.user.profile.AdminProfile;
-import com.serpents.ipv6dns.user.profile.ClientProfile;
-import com.serpents.ipv6dns.user.profile.ProfileRepository;
+import com.serpents.ipv6dns.user.profile.*;
 import com.serpents.ipv6dns.user.profile.ProfileUpdateRequest.ChangePasswordRequest;
 import com.serpents.ipv6dns.utils.JooqTable;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -27,26 +26,47 @@ public class ProfileRepositoryImpl implements ProfileRepository {
     }
 
     @Override
-    public ClientProfile findClient(final UUID id) {
+    public ClientMyProfile findMyClientProfileById(final UUID id) {
         return context.select(CLIENT_USERS.getField(ID),
                               CLIENT_USERS.getField(USERNAME),
                               CLIENT_USERS.getField(NAME),
                               CLIENT_USERS.getField(FACULTY_NUMBER),
                               CLIENT_USERS.getField(EMAIL))
                       .from(CLIENT_USERS.getTable())
-                      .where(CLIENT_USERS.getField(ID).equal(inline(id)))
-                      .fetchOne(record -> new ClientProfile(record.value1(), record.value2(), record.value3(), record.value4(), record.value5()));
+                      .where(clientIdCondition(id))
+                      .fetchOne(record -> new ClientMyProfile(record.value1(), record.value2(), record.value3(), record.value4(), record.value5()));
     }
 
     @Override
-    public AdminProfile findAdmin(final UUID id) {
+    public ClientProfile findClientById(final UUID id) {
+        return context.select(CLIENT_USERS.getField(ID),
+                              CLIENT_USERS.getField(NAME),
+                              CLIENT_USERS.getField(EMAIL),
+                              CLIENT_USERS.getField(FACULTY_NUMBER))
+                      .from(CLIENT_USERS.getTable())
+                      .where(clientIdCondition(id))
+                      .fetchOne(record -> new ClientProfile(record.value1(), record.value2(), record.value3(), record.value4()));
+    }
+
+    @Override
+    public AdminMyProfile findMyAdminProfileById(final UUID id) {
         return context.select(ADMIN_USERS.getField(ID),
                               ADMIN_USERS.getField(USERNAME),
                               ADMIN_USERS.getField(NAME),
                               ADMIN_USERS.getField(EMAIL))
                       .from(ADMIN_USERS.getTable())
-                      .where(ADMIN_USERS.getField(ID).equal(inline(id)))
-                      .fetchOne(record -> new AdminProfile(record.value1(), record.value2(), record.value3(), record.value4()));
+                      .where(adminIdCondition(id))
+                      .fetchOne(record -> new AdminMyProfile(record.value1(), record.value2(), record.value3(), record.value4()));
+    }
+
+    @Override
+    public Profile findAdminById(final UUID id) {
+        return context.select(ADMIN_USERS.getField(ID),
+                              ADMIN_USERS.getField(NAME),
+                              ADMIN_USERS.getField(EMAIL))
+                      .from(ADMIN_USERS.getTable())
+                      .where(adminIdCondition(id))
+                      .fetchOne(record -> new Profile(record.value1(), record.value2(), record.value3()));
     }
 
     @Override
@@ -83,6 +103,14 @@ public class ProfileRepositoryImpl implements ProfileRepository {
         final boolean deletedFromClients = deleteFromTable(CLIENTS, userId);
         return deletedFromClients && deleteFromTable(USERS, userId);
 
+    }
+
+    private static Condition clientIdCondition(final UUID id) {
+        return CLIENT_USERS.getField(ID).equal(inline(id));
+    }
+
+    private static Condition adminIdCondition(final UUID id) {
+        return ADMIN_USERS.getField(ID).equal(inline(id));
     }
 
     private boolean deleteFromTable(final JooqTable schema, final UUID id) {
