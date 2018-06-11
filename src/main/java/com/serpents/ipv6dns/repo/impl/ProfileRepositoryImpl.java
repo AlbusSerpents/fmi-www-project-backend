@@ -1,35 +1,23 @@
 package com.serpents.ipv6dns.repo.impl;
 
-import com.serpents.ipv6dns.credentials.UserRole;
 import com.serpents.ipv6dns.user.profile.AdminProfile;
 import com.serpents.ipv6dns.user.profile.ClientProfile;
 import com.serpents.ipv6dns.user.profile.ProfileRepository;
 import com.serpents.ipv6dns.user.profile.ProfileUpdateRequest.ChangePasswordRequest;
+import com.serpents.ipv6dns.utils.JooqSchemaUtils;
 import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
-import java.util.function.Function;
 
-import static org.jooq.impl.DSL.*;
+import static com.serpents.ipv6dns.utils.JooqField.*;
+import static com.serpents.ipv6dns.utils.JooqSchemaUtils.*;
+import static org.jooq.impl.DSL.inline;
+import static org.jooq.impl.DSL.row;
 
 @Repository
 public class ProfileRepositoryImpl implements ProfileRepository {
-
-    private final Field<UUID> idField = field("id", UUID.class);
-    private final Field<String> usernameField = field("username", String.class);
-    private final Field<String> nameField = field("name", String.class);
-    private final Field<String> emailField = field("email", String.class);
-
-    private final Table<?> adminsTable = table("admins");
-    private final Table<?> clientsTable = table("clients");
-    private final Table<?> usersTable = table("users");
-
-    private final Table<?> clientUsersView = table("client_users");
-    private final Table<?> adminUsersView = table("admin_users");
 
     private final DSLContext context;
 
@@ -40,86 +28,66 @@ public class ProfileRepositoryImpl implements ProfileRepository {
 
     @Override
     public ClientProfile findClient(final UUID id) {
-
-        final Field<Integer> facultyNumberField = field("faculty_number", Integer.class);
-
-        return context.select(idField, usernameField, nameField, facultyNumberField, emailField)
-                      .from(clientUsersView)
-                      .where(idField.equal(inline(id)))
+        return context.select(CLIENT_USERS.getField(ID),
+                              CLIENT_USERS.getField(USERNAME),
+                              CLIENT_USERS.getField(NAME),
+                              CLIENT_USERS.getField(FACULTY_NUMBER),
+                              CLIENT_USERS.getField(EMAIL))
+                      .from(CLIENT_USERS.getTable())
+                      .where(CLIENT_USERS.getField(ID).equal(inline(id)))
                       .fetchOne(record -> new ClientProfile(record.value1(), record.value2(), record.value3(), record.value4(), record.value5()));
     }
 
     @Override
     public AdminProfile findAdmin(final UUID id) {
-
-        return context.select(idField, usernameField, nameField, emailField)
-                      .from(adminUsersView)
-                      .where(idField.equal(inline(id)))
+        return context.select(ADMIN_USERS.getField(ID),
+                              ADMIN_USERS.getField(USERNAME),
+                              ADMIN_USERS.getField(NAME),
+                              ADMIN_USERS.getField(EMAIL))
+                      .from(ADMIN_USERS.getTable())
+                      .where(ADMIN_USERS.getField(ID).equal(inline(id)))
                       .fetchOne(record -> new AdminProfile(record.value1(), record.value2(), record.value3(), record.value4()));
     }
 
     @Override
-    public void updateClientEmail(final UUID id, final String email) {
-        updateEmailFieldForTable(clientsTable, id, email);
+    public boolean updateClientEmail(final UUID id, final String email) {
+        return updateEmailFieldForTable(CLIENTS, id, email);
     }
 
     @Override
-    public void updateAdminEmail(final UUID id, final String email) {
-        updateEmailFieldForTable(adminsTable, id, email);
+    public boolean updateAdminEmail(final UUID id, final String email) {
+        return updateEmailFieldForTable(ADMINS, id, email);
     }
 
-    private void updateEmailFieldForTable(final Table<?> table, final UUID id, final String email) {
-
-        final Field<UUID> idField = field("id", UUID.class);
-        final Field<String> emailField = field("email", String.class);
-
-        context.update(table)
-               .set(row(emailField), row(inline(email)))
-               .where(idField.equal(inline(id)))
-               .execute();
+    private boolean updateEmailFieldForTable(final JooqSchemaUtils schema, final UUID id, final String email) {
+        return context.update(schema.getTable())
+                      .set(row(schema.getField(EMAIL)), row(inline(email)))
+                      .where(schema.getField(ID).equal(inline(id)))
+                      .execute() == 1;
     }
 
     @Override
-    public void changePassword(final UUID userId, final UserRole role, final ChangePasswordRequest request) {
-        final Table<?> extraUsersTable = extraUsersTableForRole(role);
-
-
-        final Field<UUID> idField = field("id", UUID.class);
-        final Field<String> passwordField = field("password", String.class);
-
-        final Field<UUID> idValues = context
-                .select(idField)
-                .from(extraUsersTable)
-                .asField();
-
+    public boolean changePassword(final UUID userId, final ChangePasswordRequest request) {
         final String newPassword = request.getNewPassword();
         final String originalPassword = request.getOriginalPassword();
 
-        context.update(usersTable)
-               .set(row(passwordField), row(inline(newPassword)))
-               .where(idField.equal(inline(userId))
-                             .and(passwordField.equal(inline(originalPassword)))
-                             .and(inline(userId).in(idValues)))
-               .execute();
-    }
-
-    private Table<?> extraUsersTableForRole(final UserRole role) {
-        switch (role) {
-            case CLIENT:
-                return clientsTable;
-            case ADMIN:
-                return adminsTable;
-            default:
-                return null;
-        }
+        return context.update(USERS.getTable())
+                      .set(row(USERS.getField(PASSWORD)), row(inline(newPassword)))
+                      .where(USERS.getField(ID).equal(inline(userId))
+                                  .and(USERS.getField(PASSWORD).equal(inline(originalPassword))))
+                      .execute() == 1;
     }
 
     @Override
-    public void deleteClient(final UUID userId) {
-        final Function<Table<?>, Integer> deleteFromTableById = table -> context.delete(table)
-                                                                                .where(idField.equal(inline(userId)))
-                                                                                .execute();
-        deleteFromTableById.apply(clientsTable);
-        deleteFromTableById.apply(usersTable);
+    public boolean deleteClient(final UUID userId) {
+        final boolean deletedFromClients = deleteFromTable(CLIENTS, userId);
+        return deletedFromClients && deleteFromTable(USERS, userId);
+
+    }
+
+    private boolean deleteFromTable(final JooqSchemaUtils schema, final UUID id) {
+        return context.delete(schema.getTable())
+                      .where(schema.getField(ID).equal(inline(id)))
+                      .execute() == 1;
     }
 }

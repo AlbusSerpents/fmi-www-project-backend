@@ -70,6 +70,68 @@ public enum JooqSchemaUtils {
             fieldsMap.put(DETAILS_ID, DSL.name("domain_details_id"));
             return fieldsMap;
         }
+    },
+    ADMINS(table("admins")) {
+        @Override
+        protected Map<JooqField<?>, Name> loadFieldsMap() {
+            final Map<JooqField<?>, Name> fieldsMap = new HashMap<>();
+
+            fieldsMap.put(ID, DSL.name("id"));
+            fieldsMap.put(EMAIL, DSL.name("email"));
+            return fieldsMap;
+        }
+    },
+    CLIENTS(table("clients")) {
+        @Override
+        protected Map<JooqField<?>, Name> loadFieldsMap() {
+            final Map<JooqField<?>, Name> fieldsMap = new HashMap<>();
+
+            fieldsMap.put(ID, DSL.name("id"));
+            fieldsMap.put(EMAIL, DSL.name("email"));
+            fieldsMap.put(FACULTY_NUMBER, DSL.name("faculty_number"));
+            fieldsMap.put(IS_BLOCKED, DSL.name("is_blocked"));
+            return fieldsMap;
+        }
+    },
+    USERS(table("users")) {
+        @Override
+        protected Map<JooqField<?>, Name> loadFieldsMap() {
+            final Map<JooqField<?>, Name> fieldsMap = new HashMap<>();
+
+            fieldsMap.put(ID, DSL.name("id"));
+            fieldsMap.put(USERNAME, DSL.name("username"));
+            fieldsMap.put(PASSWORD, DSL.name("password"));
+            fieldsMap.put(NAME, DSL.name("name"));
+            return fieldsMap;
+        }
+    },
+    CLIENT_USERS(table("client_users")) {
+        @Override
+        protected Map<JooqField<?>, Name> loadFieldsMap() {
+            final Map<JooqField<?>, Name> fieldsMap = new HashMap<>();
+
+            fieldsMap.put(ID, DSL.name("id"));
+            fieldsMap.put(USERNAME, DSL.name("username"));
+            fieldsMap.put(PASSWORD, DSL.name("password"));
+            fieldsMap.put(NAME, DSL.name("name"));
+            fieldsMap.put(EMAIL, DSL.name("email"));
+            fieldsMap.put(FACULTY_NUMBER, DSL.name("faculty_number"));
+            fieldsMap.put(IS_BLOCKED, DSL.name("is_blocked"));
+            return fieldsMap;
+        }
+    },
+    ADMIN_USERS(table("admin_users")) {
+        @Override
+        protected Map<JooqField<?>, Name> loadFieldsMap() {
+            final Map<JooqField<?>, Name> fieldsMap = new HashMap<>();
+
+            fieldsMap.put(ID, DSL.name("id"));
+            fieldsMap.put(USERNAME, DSL.name("username"));
+            fieldsMap.put(PASSWORD, DSL.name("password"));
+            fieldsMap.put(NAME, DSL.name("name"));
+            fieldsMap.put(EMAIL, DSL.name("email"));
+            return fieldsMap;
+        }
     };
 
     JooqSchemaUtils(final Table<?> table) {
