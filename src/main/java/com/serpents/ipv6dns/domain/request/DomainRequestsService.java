@@ -45,14 +45,15 @@ public class DomainRequestsService {
 
     private Pattern domainPatter(final ApplicationProperties properties) {
         final String zoneName = properties.getProperty(DNS_ZONE_NAME);
-        return compile("(www\\.)?([0-9a-zA-Z-_]+)(" + zoneName + ")");
+        return compile("(www\\.)?([0-9a-zA-Z\\-_]+)\\.(" + zoneName + ")");
     }
 
     @Transactional
     public DomainRequestResponse requestDomain(final UUID clientId, final DomainDetails details) {
         final String domainName = details.getDomainName();
         if (!domainNamePattern.matcher(domainName).matches()) {
-            throw new InvalidDomainNameException(domainName + " is not a valid domain name");
+            final String message = String.format("%s is not a valid domain name", domainName);
+            throw new InvalidDomainNameException(message);
         }
         final DomainRequest request = new DomainRequest(clientId, SENT, details);
         return requestsRepository.insert(request);
