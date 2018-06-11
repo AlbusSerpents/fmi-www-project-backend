@@ -12,7 +12,7 @@ import static com.serpents.ipv6dns.utils.JooqField.*;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
 
-public enum JooqSchemaUtils {
+public enum JooqTable {
 
     DOMAIN_DETAILS(table("domain_details")) {
         @Override
@@ -134,7 +134,7 @@ public enum JooqSchemaUtils {
         }
     };
 
-    JooqSchemaUtils(final Table<?> table) {
+    JooqTable(final Table<?> table) {
         this.jooqTable = table;
         fields = loadFieldsMap();
     }

@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.serpents.ipv6dns.utils.JooqField.*;
-import static com.serpents.ipv6dns.utils.JooqSchemaUtils.*;
+import static com.serpents.ipv6dns.utils.JooqTable.*;
 import static com.serpents.ipv6dns.utils.JooqUtils.optionalFieldCondition;
 import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.inline;

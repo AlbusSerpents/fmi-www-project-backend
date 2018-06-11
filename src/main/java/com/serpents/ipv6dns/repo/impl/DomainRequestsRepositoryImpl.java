@@ -18,8 +18,8 @@ import java.util.UUID;
 import static com.serpents.ipv6dns.domain.request.DomainRequestStatus.APPROVED;
 import static com.serpents.ipv6dns.domain.request.DomainRequestStatus.SENT;
 import static com.serpents.ipv6dns.utils.JooqField.*;
-import static com.serpents.ipv6dns.utils.JooqSchemaUtils.DOMAIN_DETAILS;
-import static com.serpents.ipv6dns.utils.JooqSchemaUtils.DOMAIN_REQUESTS;
+import static com.serpents.ipv6dns.utils.JooqTable.DOMAIN_DETAILS;
+import static com.serpents.ipv6dns.utils.JooqTable.DOMAIN_REQUESTS;
 import static com.serpents.ipv6dns.utils.TimeUtils.nowAtUtc;
 import static org.jooq.impl.DSL.*;
 

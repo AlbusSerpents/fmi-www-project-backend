@@ -4,7 +4,7 @@ import com.serpents.ipv6dns.user.profile.AdminProfile;
 import com.serpents.ipv6dns.user.profile.ClientProfile;
 import com.serpents.ipv6dns.user.profile.ProfileRepository;
 import com.serpents.ipv6dns.user.profile.ProfileUpdateRequest.ChangePasswordRequest;
-import com.serpents.ipv6dns.utils.JooqSchemaUtils;
+import com.serpents.ipv6dns.utils.JooqTable;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 import static com.serpents.ipv6dns.utils.JooqField.*;
-import static com.serpents.ipv6dns.utils.JooqSchemaUtils.*;
+import static com.serpents.ipv6dns.utils.JooqTable.*;
 import static org.jooq.impl.DSL.inline;
 import static org.jooq.impl.DSL.row;
 
@@ -59,7 +59,7 @@ public class ProfileRepositoryImpl implements ProfileRepository {
         return updateEmailFieldForTable(ADMINS, id, email);
     }
 
-    private boolean updateEmailFieldForTable(final JooqSchemaUtils schema, final UUID id, final String email) {
+    private boolean updateEmailFieldForTable(final JooqTable schema, final UUID id, final String email) {
         return context.update(schema.getTable())
                       .set(row(schema.getField(EMAIL)), row(inline(email)))
                       .where(schema.getField(ID).equal(inline(id)))
@@ -85,7 +85,7 @@ public class ProfileRepositoryImpl implements ProfileRepository {
 
     }
 
-    private boolean deleteFromTable(final JooqSchemaUtils schema, final UUID id) {
+    private boolean deleteFromTable(final JooqTable schema, final UUID id) {
         return context.delete(schema.getTable())
                       .where(schema.getField(ID).equal(inline(id)))
                       .execute() == 1;

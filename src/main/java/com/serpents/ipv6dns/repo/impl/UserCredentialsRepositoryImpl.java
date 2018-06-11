@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import static com.serpents.ipv6dns.utils.JooqField.*;
-import static com.serpents.ipv6dns.utils.JooqSchemaUtils.ADMIN_USERS;
-import static com.serpents.ipv6dns.utils.JooqSchemaUtils.CLIENT_USERS;
+import static com.serpents.ipv6dns.utils.JooqTable.ADMIN_USERS;
+import static com.serpents.ipv6dns.utils.JooqTable.CLIENT_USERS;
 import static org.jooq.impl.DSL.inline;
 
 @Repository

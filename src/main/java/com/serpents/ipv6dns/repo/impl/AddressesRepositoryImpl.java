@@ -12,8 +12,8 @@ import java.util.UUID;
 
 import static com.serpents.ipv6dns.utils.JooqField.ADDRESS;
 import static com.serpents.ipv6dns.utils.JooqField.ID;
-import static com.serpents.ipv6dns.utils.JooqSchemaUtils.ADDRESSES;
-import static com.serpents.ipv6dns.utils.JooqSchemaUtils.FREE_ADDRESSES;
+import static com.serpents.ipv6dns.utils.JooqTable.ADDRESSES;
+import static com.serpents.ipv6dns.utils.JooqTable.FREE_ADDRESSES;
 import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.inline;
 

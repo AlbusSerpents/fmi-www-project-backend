@@ -10,8 +10,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.serpents.ipv6dns.utils.JooqField.*;
-import static com.serpents.ipv6dns.utils.JooqSchemaUtils.CLIENTS;
-import static com.serpents.ipv6dns.utils.JooqSchemaUtils.USERS;
+import static com.serpents.ipv6dns.utils.JooqTable.CLIENTS;
+import static com.serpents.ipv6dns.utils.JooqTable.USERS;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.UUID.randomUUID;

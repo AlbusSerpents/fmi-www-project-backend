@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 import static com.serpents.ipv6dns.utils.JooqField.*;
-import static com.serpents.ipv6dns.utils.JooqSchemaUtils.DOMAIN_DETAILS;
+import static com.serpents.ipv6dns.utils.JooqTable.DOMAIN_DETAILS;
 import static org.jooq.impl.DSL.inline;
 
 @Repository
