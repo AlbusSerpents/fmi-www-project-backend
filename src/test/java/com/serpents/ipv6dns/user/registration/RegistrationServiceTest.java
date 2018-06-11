@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import static java.util.Optional.of;
 import static java.util.UUID.randomUUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -74,6 +75,6 @@ public class RegistrationServiceTest {
     }
 
     private void mockCreateClient(final UUID result) {
-        when(repository.createClient(any())).thenReturn(result);
+        when(repository.createClient(any())).thenReturn(of(result));
     }
 }

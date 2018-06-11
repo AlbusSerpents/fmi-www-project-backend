@@ -3,15 +3,19 @@ package com.serpents.ipv6dns.repo.impl;
 import com.serpents.ipv6dns.user.registration.RegistrationRepository;
 import com.serpents.ipv6dns.user.registration.RegistrationRequest;
 import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
+import static com.serpents.ipv6dns.utils.JooqField.*;
+import static com.serpents.ipv6dns.utils.JooqSchemaUtils.CLIENTS;
+import static com.serpents.ipv6dns.utils.JooqSchemaUtils.USERS;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.UUID.randomUUID;
-import static org.jooq.impl.DSL.*;
+import static org.jooq.impl.DSL.inline;
 
 @Repository
 public class RegistrationRepositoryImpl implements RegistrationRepository {
@@ -24,28 +28,18 @@ public class RegistrationRepositoryImpl implements RegistrationRepository {
     }
 
     @Override
-    public UUID createClient(final RegistrationRequest request) {
+    public Optional<UUID> createClient(final RegistrationRequest request) {
         final UUID id = randomUUID();
 
-        final Table<?> usersTable = table("users");
-        final Table<?> clientsTable = table("clients");
-        final Field<UUID> idField = field("id", UUID.class);
+        final boolean inserted =
+                context.insertInto(USERS.getTable(), USERS.getField(ID), USERS.getField(USERNAME), USERS.getField(PASSWORD), USERS.getField(NAME))
+                       .values(inline(id), inline(request.getUsername()), inline(request.getPassword()), inline(request.getName()))
+                       .execute() == 1
+                &&
+                context.insertInto(CLIENTS.getTable(), CLIENTS.getField(ID), CLIENTS.getField(EMAIL), CLIENTS.getField(FACULTY_NUMBER), CLIENTS.getField(IS_BLOCKED))
+                       .values(inline(id), inline(request.getEmail()), inline(request.getFacultyNumber()), inline(false))
+                       .execute() == 1;
 
-        final Field<String> usernameField = field("username", String.class);
-        final Field<String> passwordField = field("password", String.class);
-        final Field<String> nameField = field("name", String.class);
-
-        final Field<String> emailField = field("email", String.class);
-        final Field<Integer> facultyNumberField = field("faculty_number", Integer.class);
-        final Field<Boolean> isBlockedField = field("is_blocked", Boolean.class);
-
-        context.insertInto(usersTable, idField, usernameField, passwordField, nameField)
-               .values(inline(id), inline(request.getUsername()), inline(request.getPassword()), inline(request.getName()))
-               .execute();
-        context.insertInto(clientsTable, idField, emailField, facultyNumberField, isBlockedField)
-               .values(inline(id), inline(request.getEmail()), inline(request.getFacultyNumber()), inline(false))
-               .execute();
-
-        return id;
+        return inserted ? of(id) : empty();
     }
 }

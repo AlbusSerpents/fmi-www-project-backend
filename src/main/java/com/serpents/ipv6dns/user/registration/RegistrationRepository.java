@@ -1,9 +1,10 @@
 package com.serpents.ipv6dns.user.registration;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface RegistrationRepository {
 
-    UUID createClient(final RegistrationRequest request);
+    Optional<UUID> createClient(final RegistrationRequest request);
 
 }
