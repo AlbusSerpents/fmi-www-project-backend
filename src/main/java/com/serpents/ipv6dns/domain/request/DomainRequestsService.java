@@ -7,17 +7,22 @@ import com.serpents.ipv6dns.domain.DomainCreatedResponse;
 import com.serpents.ipv6dns.domain.DomainDetails;
 import com.serpents.ipv6dns.domain.DomainRepository;
 import com.serpents.ipv6dns.domain.request.DomainRequest.Identifier;
+import com.serpents.ipv6dns.exception.InvalidDomainNameException;
 import com.serpents.ipv6dns.exception.ObjectNotInTheCorrectStateException;
 import com.serpents.ipv6dns.exception.OutOfAddressSpaceException;
 import com.serpents.ipv6dns.exception.UnauthorizedOperationException;
+import com.serpents.ipv6dns.spring.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import static com.serpents.ipv6dns.domain.request.DomainRequestStatus.SENT;
+import static com.serpents.ipv6dns.spring.properties.ApplicationPropertiesKey.DNS_ZONE_NAME;
+import static java.util.regex.Pattern.compile;
 
 @Service
 public class DomainRequestsService {
@@ -25,16 +30,30 @@ public class DomainRequestsService {
     private final DomainRequestsRepository requestsRepository;
     private final DomainRepository domainRepository;
     private final AddressesRepository addressesRepository;
+    private final Pattern domainNamePattern;
 
     @Autowired
-    public DomainRequestsService(final DomainRequestsRepository requestsRepository, final DomainRepository domainRepository, final AddressesRepository addressesRepository) {
+    public DomainRequestsService(final DomainRequestsRepository requestsRepository,
+                                 final DomainRepository domainRepository,
+                                 final AddressesRepository addressesRepository,
+                                 final ApplicationProperties properties) {
         this.requestsRepository = requestsRepository;
         this.domainRepository = domainRepository;
         this.addressesRepository = addressesRepository;
+        this.domainNamePattern = domainPatter(properties);
+    }
+
+    private Pattern domainPatter(final ApplicationProperties properties) {
+        final String zoneName = properties.getProperty(DNS_ZONE_NAME);
+        return compile("(www\\.)?([0-9a-zA-Z-_]+)(" + zoneName + ")");
     }
 
     @Transactional
     public DomainRequestResponse requestDomain(final UUID clientId, final DomainDetails details) {
+        final String domainName = details.getDomainName();
+        if (!domainNamePattern.matcher(domainName).matches()) {
+            throw new InvalidDomainNameException(domainName + " is not a valid domain name");
+        }
         final DomainRequest request = new DomainRequest(clientId, SENT, details);
         return requestsRepository.insert(request);
     }
