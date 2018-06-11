@@ -41,4 +41,11 @@ public class ManagementEndpoint {
     public void deleteDomains(final @PathVariable(value = "userId") UUID clientId) {
         service.revokeDomainOwnership(clientId);
     }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/{userId}", method = DELETE)
+    public void deleteProfile(final @PathVariable(name = "userId") UUID userId) {
+        service.deleteProfile(userId);
+    }
+
 }

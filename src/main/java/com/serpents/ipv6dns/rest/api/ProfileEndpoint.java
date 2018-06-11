@@ -60,15 +60,4 @@ public class ProfileEndpoint {
         validateUserId(details, userId);
         service.updateProfile(userId, request);
     }
-
-    @ResponseStatus(NO_CONTENT)
-    @RequestMapping(value = "/{userId}", method = DELETE)
-    public void deleteProfile(
-            final @AuthenticationPrincipal UserDetailsImpl details,
-            final @PathVariable(name = "userId") UUID userId,
-            final HttpSession session) {
-        validateUserId(details, userId);
-        service.deleteProfile(userId);
-        session.invalidate();
-    }
 }

@@ -9,4 +9,6 @@ public interface ManagementRepository {
     void deleteRequestsByClient(final UUID client);
 
     void deleteDomainsByOwner(final UUID ownerId);
+
+    boolean deleteClient(final UUID userId);
 }

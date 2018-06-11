@@ -20,6 +20,4 @@ public interface ProfileRepository {
 
     boolean changePassword(final UUID userId, final ChangePasswordRequest request);
 
-    boolean deleteClient(final UUID userId);
-
 }

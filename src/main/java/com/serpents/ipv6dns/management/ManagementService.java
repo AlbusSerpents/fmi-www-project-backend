@@ -39,4 +39,14 @@ public class ManagementService {
         repository.deleteRequestsByClient(clientId);
         repository.deleteDomainsByOwner(clientId);
     }
+
+    @Transactional
+    public void deleteProfile(final UUID clientId) {
+        revokeDomainOwnership(clientId);
+        final boolean success = repository.deleteClient(clientId);
+        if (!success) {
+            final String message = String.format("Couldn't delete profile with id: %s", clientId);
+            throw new OperationFailedException(message);
+        }
+    }
 }

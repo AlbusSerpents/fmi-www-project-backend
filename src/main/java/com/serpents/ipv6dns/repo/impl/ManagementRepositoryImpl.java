@@ -1,6 +1,7 @@
 package com.serpents.ipv6dns.repo.impl;
 
 import com.serpents.ipv6dns.management.ManagementRepository;
+import com.serpents.ipv6dns.utils.JooqTable;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -43,4 +44,18 @@ public class ManagementRepositoryImpl implements ManagementRepository {
                .where(DOMAINS.getField(OWNER).equal(inline(ownerId)))
                .execute();
     }
+
+    @Override
+    public boolean deleteClient(final UUID userId) {
+        final boolean deletedFromClients = deleteClientFromTable(CLIENTS, userId);
+        return deletedFromClients && deleteClientFromTable(USERS, userId);
+    }
+
+    private boolean deleteClientFromTable(final JooqTable schema, final UUID id) {
+        return context.delete(schema.getTable())
+                      .where(schema.getField(ID).equal(inline(id)))
+                      .execute() == 1;
+    }
+
+
 }

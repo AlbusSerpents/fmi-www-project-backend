@@ -93,12 +93,4 @@ public class ProfileService {
         return new ChangePasswordRequest(encodedOriginalPassword, encodedNewPassword);
     }
 
-    @Transactional
-    public void deleteProfile(final UUID userId) {
-        final boolean success = repository.deleteClient(userId);
-        if (!success) {
-            final String message = String.format("Couldn't delete profile with id: %s", userId);
-            throw new OperationFailedException(message);
-        }
-    }
 }

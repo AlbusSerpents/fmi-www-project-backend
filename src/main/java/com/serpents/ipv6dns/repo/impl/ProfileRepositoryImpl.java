@@ -98,24 +98,11 @@ public class ProfileRepositoryImpl implements ProfileRepository {
                       .execute() == 1;
     }
 
-    @Override
-    public boolean deleteClient(final UUID userId) {
-        final boolean deletedFromClients = deleteFromTable(CLIENTS, userId);
-        return deletedFromClients && deleteFromTable(USERS, userId);
-
-    }
-
     private static Condition clientIdCondition(final UUID id) {
         return CLIENT_USERS.getField(ID).equal(inline(id));
     }
 
     private static Condition adminIdCondition(final UUID id) {
         return ADMIN_USERS.getField(ID).equal(inline(id));
-    }
-
-    private boolean deleteFromTable(final JooqTable schema, final UUID id) {
-        return context.delete(schema.getTable())
-                      .where(schema.getField(ID).equal(inline(id)))
-                      .execute() == 1;
     }
 }

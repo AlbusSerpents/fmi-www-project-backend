@@ -63,9 +63,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             // Addresses
             .regexMatchers("addresses.*").hasAnyAuthority(ADMIN_USER.getAuthority())
 
-            // Delete profile
-            .regexMatchers(DELETE, "user/.*").hasAuthority(CLIENT_USER.getAuthority())
-
             // Create, read or cancel request
             .regexMatchers(POST, "request").hasAnyAuthority(CLIENT_USER.getAuthority())
             .regexMatchers(DELETE, "request/.*").hasAnyAuthority(CLIENT_USER.getAuthority())
@@ -77,7 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .regexMatchers(POST, "request/.*/reject").hasAnyAuthority(ADMIN_USER.getAuthority())
 
             // Manage accounts
-            .regexMatchers("/manage").hasAuthority(ADMIN_USER.getAuthority())
+            .regexMatchers("/manage.*").hasAuthority(ADMIN_USER.getAuthority())
 
             // Get domains and get by id
             .regexMatchers(GET, "domain?.*").hasAnyAuthority(BASE_USER.getAuthority())
