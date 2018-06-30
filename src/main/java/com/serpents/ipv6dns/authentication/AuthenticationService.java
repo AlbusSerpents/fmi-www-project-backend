@@ -1,5 +1,6 @@
 package com.serpents.ipv6dns.authentication;
 
+import com.serpents.ipv6dns.spring.user.details.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,8 +29,8 @@ public class AuthenticationService {
         final Authentication authenticationResponse = authenticationManager.authenticate(authenticationRequest);
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authenticationResponse);
+        final UserDetailsImpl details = (UserDetailsImpl) authenticationResponse.getPrincipal();
 
-
-        return new AuthenticationResponse(sessionId, username);
+        return new AuthenticationResponse(sessionId, details.getUserId(), username);
     }
 }
