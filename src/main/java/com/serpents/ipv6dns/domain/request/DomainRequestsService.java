@@ -31,6 +31,7 @@ public class DomainRequestsService {
     private final DomainRepository domainRepository;
     private final AddressesRepository addressesRepository;
     private final Pattern domainNamePattern;
+    private final Pattern fullDomainNamePattern;
 
     @Autowired
     public DomainRequestsService(final DomainRequestsRepository requestsRepository,
@@ -41,22 +42,37 @@ public class DomainRequestsService {
         this.domainRepository = domainRepository;
         this.addressesRepository = addressesRepository;
         this.domainNamePattern = domainPatter(properties);
+        this.fullDomainNamePattern = fullDomainNamePatter(properties);
     }
 
     private Pattern domainPatter(final ApplicationProperties properties) {
         final String zoneName = properties.getProperty(DNS_ZONE_NAME);
-        return compile("(www\\.)?([0-9a-zA-Z\\-_]+)\\.(" + zoneName + ")");
+        return compile("([0-9a-zA-Z\\-_]+)(" + zoneName + ")");
+    }
+
+    private Pattern fullDomainNamePatter(final ApplicationProperties properties) {
+        final String zoneName = properties.getProperty(DNS_ZONE_NAME);
+        return compile("(www\\.)?([0-9a-zA-Z\\-_]+)(" + zoneName + ")");
     }
 
     @Transactional
     public DomainRequestResponse requestDomain(final UUID clientId, final DomainDetails details) {
         final String domainName = details.getDomainName();
-        if (!domainNamePattern.matcher(domainName).matches()) {
+        final String realDomainName = validateDomainName(domainName);
+        final DomainDetails realDetails = new DomainDetails(details.getId(), realDomainName, details.getDescription());
+        final DomainRequest request = new DomainRequest(clientId, SENT, realDetails);
+        return requestsRepository.insert(request);
+    }
+
+    private String validateDomainName(final String domainName) {
+        if (fullDomainNamePattern.matcher(domainName).matches()) {
+            return domainName.substring(4);
+        } else if (domainNamePattern.matcher(domainName).matches()) {
+            return domainName;
+        } else {
             final String message = String.format("%s is not a valid domain name", domainName);
             throw new InvalidDomainNameException(message);
         }
-        final DomainRequest request = new DomainRequest(clientId, SENT, details);
-        return requestsRepository.insert(request);
     }
 
     @Transactional
