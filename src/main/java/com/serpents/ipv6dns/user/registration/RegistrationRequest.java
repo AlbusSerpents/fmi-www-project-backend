@@ -29,6 +29,7 @@ public class RegistrationRequest {
     @Max(99999)
     private Integer facultyNumber;
 
+    @NotBlank
     private String email;
 
 }
