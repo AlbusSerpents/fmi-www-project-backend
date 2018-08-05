@@ -32,7 +32,7 @@ public class ProfileEndpoint {
     }
 
     @ResponseStatus(OK)
-    @RequestMapping(value = "my-profile/{userId}", method = GET, produces = "application/json")
+    @RequestMapping(value = "/my-profile/{userId}", method = GET, produces = "application/json")
     public Profile getMyProfile(
             final @AuthenticationPrincipal UserDetailsImpl details,
             final @PathVariable(name = "userId") UUID userId,
@@ -43,7 +43,7 @@ public class ProfileEndpoint {
     }
 
     @ResponseStatus(OK)
-    @RequestMapping(value = "view/{userId}", method = GET, produces = "application/json")
+    @RequestMapping(value = "/view/{userId}", method = GET, produces = "application/json")
     public Profile viewUserProfile(
             final @PathVariable(name = "userId") UUID userId,
             final @RequestParam(name = "userRole") char roleToken) {
