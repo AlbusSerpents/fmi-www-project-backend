@@ -91,7 +91,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .regexMatchers(GET, "/domain/my-domains/.*").hasAnyAuthority(CLIENT_USER.getAuthority())
 
                 // user profile
-                .regexMatchers("/user/.*").hasAuthority(BASE_USER.getAuthority())
+                .regexMatchers(GET,"/user/.*").hasAuthority(BASE_USER.getAuthority())
+                .regexMatchers(PUT,"/user/.*").hasAuthority(BASE_USER.getAuthority())
 
                 // common
                 .regexMatchers(GET, "/status").permitAll();

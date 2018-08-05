@@ -21,7 +21,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping("/user")
 public class ProfileEndpoint {
 
     private final ProfileService service;
@@ -32,7 +32,7 @@ public class ProfileEndpoint {
     }
 
     @ResponseStatus(OK)
-    @RequestMapping(value = "/my-profile/{userId}", method = GET, produces = "application/json")
+    @RequestMapping(value = "/{userId}", method = GET, produces = "application/json")
     public Profile getMyProfile(
             final @AuthenticationPrincipal UserDetailsImpl details,
             final @PathVariable(name = "userId") UUID userId,
