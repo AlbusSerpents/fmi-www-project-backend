@@ -18,15 +18,15 @@ apply plugin: 'idea'
 
 group = 'com.serpents.'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.8
+sourceCompatibility = 1.10
 
 war {
     baseName = 'ip-v6-dns'
     version = '0.0.1-SNAPSHOT'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.10
+targetCompatibility = 1.10
 
 repositories {
     mavenCentral()
@@ -52,7 +52,7 @@ dependencies {
 
     providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
     runtime('org.postgresql:postgresql')
-    compileOnly('org.projectlombok:lombok')
+    compileOnly('org.projectlombok:lombok:1.18.2')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
