@@ -32,13 +32,17 @@ public class AuthenticationEndpoint {
 
     @RequestMapping(value = "", method = POST, consumes = "application/json", produces = "application/json")
     @ResponseStatus(CREATED)
-    public AuthenticationResponse login(final HttpSession session, final @RequestBody @Valid AuthenticationRequest request) {
+    public AuthenticationResponse login(
+            final HttpSession session,
+            final @RequestBody @Valid AuthenticationRequest request) {
         return service.authenticate(request, session.getId());
     }
 
     @RequestMapping(value = "", method = DELETE)
     @ResponseStatus(NO_CONTENT)
-    public void logout(final HttpSession session, final @AuthenticationPrincipal UserDetails details) {
+    public void logout(
+            final HttpSession session,
+            final @AuthenticationPrincipal UserDetails details) {
         session.invalidate();
     }
 }

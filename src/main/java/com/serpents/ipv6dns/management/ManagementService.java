@@ -1,10 +1,12 @@
 package com.serpents.ipv6dns.management;
 
 import com.serpents.ipv6dns.exception.OperationFailedException;
+import com.serpents.ipv6dns.user.profile.ClientProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -15,6 +17,11 @@ public class ManagementService {
     @Autowired
     public ManagementService(final ManagementRepository repository) {
         this.repository = repository;
+    }
+
+    @Transactional
+    public List<ClientProfile> getAllClients() {
+        return repository.findAllClients();
     }
 
     @Transactional

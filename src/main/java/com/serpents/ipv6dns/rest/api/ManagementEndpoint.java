@@ -1,17 +1,18 @@
 package com.serpents.ipv6dns.rest.api;
 
 import com.serpents.ipv6dns.management.ManagementService;
+import com.serpents.ipv6dns.user.profile.ClientProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequestMapping("/manage")
@@ -22,6 +23,11 @@ public class ManagementEndpoint {
     @Autowired
     public ManagementEndpoint(final ManagementService service) {
         this.service = service;
+    }
+
+    @RequestMapping(value = "", method = GET)
+    public List<ClientProfile> getAllClients() {
+        return service.getAllClients();
     }
 
     @ResponseStatus(NO_CONTENT)

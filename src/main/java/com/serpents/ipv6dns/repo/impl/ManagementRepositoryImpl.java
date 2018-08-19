@@ -1,11 +1,13 @@
 package com.serpents.ipv6dns.repo.impl;
 
 import com.serpents.ipv6dns.management.ManagementRepository;
+import com.serpents.ipv6dns.user.profile.ClientProfile;
 import com.serpents.ipv6dns.utils.JooqTable;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import static com.serpents.ipv6dns.utils.JooqField.*;
@@ -21,6 +23,17 @@ public class ManagementRepositoryImpl implements ManagementRepository {
     @Autowired
     public ManagementRepositoryImpl(final DSLContext context) {
         this.context = context;
+    }
+
+    @Override
+    public List<ClientProfile> findAllClients() {
+        return context.select(CLIENT_USERS.getField(ID),
+                              CLIENT_USERS.getField(NAME),
+                              CLIENT_USERS.getField(EMAIL),
+                              CLIENT_USERS.getField(FACULTY_NUMBER))
+                      .from(CLIENT_USERS.getTable())
+                      .where(CLIENT_USERS.getField(IS_BLOCKED).isFalse())
+                      .fetch(record -> new ClientProfile(record.value1(), record.value2(), record.value3(), record.value4()));
     }
 
     @Override
