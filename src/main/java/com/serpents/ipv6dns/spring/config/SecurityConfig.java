@@ -55,6 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(entryPoint)
                 .and().authorizeRequests()
 
+                .regexMatchers(OPTIONS,".*").permitAll()
                 // register client
                 .regexMatchers(POST, "/client").permitAll()
 
