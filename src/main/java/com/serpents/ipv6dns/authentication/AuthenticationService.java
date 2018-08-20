@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationService {
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
     public AuthenticationService(final AuthenticationManager authenticationManager) {

@@ -2,7 +2,6 @@ package com.serpents.ipv6dns.spring.config;
 
 
 import com.serpents.ipv6dns.spring.properties.ApplicationProperties;
-import com.serpents.ipv6dns.spring.properties.ApplicationPropertiesKey;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.jooq.ConnectionProvider;
 import org.jooq.DSLContext;
@@ -20,6 +19,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 
+import static com.serpents.ipv6dns.spring.properties.ApplicationPropertiesKey.JDBC_URL;
 import static org.jooq.SQLDialect.POSTGRES;
 import static org.jooq.impl.DSL.using;
 
@@ -31,14 +31,13 @@ public class JooqConfig {
 
     @Autowired
     public JooqConfig(final ApplicationProperties applicationProperties) {
-        databaseUrl = applicationProperties.getProperty(ApplicationPropertiesKey.JDBC_URL);
+        databaseUrl = applicationProperties.getProperty(JDBC_URL);
     }
 
     @Bean
     public DataSource dataSource() {
         final BasicDataSource dataSource = new BasicDataSource();
         dataSource.setUrl(databaseUrl);
-
         return new TransactionAwareDataSourceProxy(dataSource);
     }
 
@@ -49,7 +48,10 @@ public class JooqConfig {
     }
 
     @Bean
-    public org.jooq.Configuration configuration(final DataSource dataSource, final ConnectionProvider provider, final DefaultExecuteListenerProvider executeListenerProvider) {
+    public org.jooq.Configuration configuration(
+            final DataSource dataSource,
+            final ConnectionProvider provider,
+            final DefaultExecuteListenerProvider executeListenerProvider) {
         return new DefaultConfiguration()
                 .derive(POSTGRES)
                 .derive(provider)

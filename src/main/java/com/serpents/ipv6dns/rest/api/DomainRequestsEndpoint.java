@@ -1,9 +1,7 @@
 package com.serpents.ipv6dns.rest.api;
 
-import com.serpents.ipv6dns.domain.DomainCreatedResponse;
 import com.serpents.ipv6dns.domain.DomainDetails;
 import com.serpents.ipv6dns.domain.request.DomainRequestInfo;
-import com.serpents.ipv6dns.domain.request.DomainRequestResponse;
 import com.serpents.ipv6dns.domain.request.DomainRequestsService;
 import com.serpents.ipv6dns.spring.user.details.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +29,11 @@ public class DomainRequestsEndpoint {
 
     @ResponseStatus(CREATED)
     @RequestMapping(value = "", method = POST, consumes = "application/json", produces = "application/json")
-    public DomainRequestResponse requestDomain(
+    public void requestDomain(
             final @AuthenticationPrincipal UserDetailsImpl details,
             final @RequestBody @Valid DomainDetails domainDetails) {
         final UUID userId = details.getUserId();
-        return service.requestDomain(userId, domainDetails);
+        service.requestDomain(userId, domainDetails);
     }
 
     @ResponseStatus(OK)
@@ -46,8 +44,8 @@ public class DomainRequestsEndpoint {
 
     @ResponseStatus(CREATED)
     @RequestMapping(value = "/{requestId}/approve", method = POST, consumes = "application/json")
-    public DomainCreatedResponse approve(final @PathVariable(name = "requestId") UUID requestId) {
-        return service.approve(requestId);
+    public void approve(final @PathVariable(name = "requestId") UUID requestId) {
+        service.approve(requestId);
     }
 
     @ResponseStatus(NO_CONTENT)

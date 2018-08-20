@@ -2,7 +2,10 @@ package com.serpents.ipv6dns.repo.impl;
 
 import com.serpents.ipv6dns.domain.DomainDetails;
 import com.serpents.ipv6dns.domain.DomainDetailsRepository;
-import com.serpents.ipv6dns.domain.request.*;
+import com.serpents.ipv6dns.domain.request.DomainRequest;
+import com.serpents.ipv6dns.domain.request.DomainRequest.DomainRequestStatus;
+import com.serpents.ipv6dns.domain.request.DomainRequestInfo;
+import com.serpents.ipv6dns.domain.request.DomainRequestsRepository;
 import org.jooq.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -11,8 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.serpents.ipv6dns.domain.request.DomainRequestStatus.APPROVED;
-import static com.serpents.ipv6dns.domain.request.DomainRequestStatus.SENT;
+import static com.serpents.ipv6dns.domain.request.DomainRequest.DomainRequestStatus.APPROVED;
+import static com.serpents.ipv6dns.domain.request.DomainRequest.DomainRequestStatus.SENT;
 import static com.serpents.ipv6dns.utils.JooqField.*;
 import static com.serpents.ipv6dns.utils.JooqTable.*;
 import static com.serpents.ipv6dns.utils.TimeUtils.nowAtUtc;
@@ -46,18 +49,15 @@ public class DomainRequestsRepositoryImpl implements DomainRequestsRepository {
     }
 
     @Override
-    public DomainRequestResponse insert(final DomainRequest request) {
+    public void insert(final DomainRequest request) {
         final DomainDetails details = request.getDomainDetails();
         final UUID detailsId = detailsRepository.insert(details);
 
-        final UUID requestId =
-                context.insertInto(DOMAIN_REQUESTS.getTable(), DOMAIN_REQUESTS.getField(STATUS), DOMAIN_REQUESTS.getField(CLIENT_ID), DOMAIN_REQUESTS.getField(DETAILS_ID))
-                       .values(inline(request.getStatus().name()), inline(request.getClientId()), inline(detailsId))
-                       .returning(DOMAIN_REQUESTS.getField(ID))
-                       .fetchOne()
-                       .get(DOMAIN_REQUESTS.getField(ID));
-
-        return new DomainRequestResponse(requestId);
+        context.insertInto(DOMAIN_REQUESTS.getTable(), DOMAIN_REQUESTS.getField(STATUS), DOMAIN_REQUESTS.getField(CLIENT_ID), DOMAIN_REQUESTS.getField(DETAILS_ID))
+               .values(inline(request.getStatus().name()), inline(request.getClientId()), inline(detailsId))
+               .returning(DOMAIN_REQUESTS.getField(ID))
+               .fetchOne()
+               .get(DOMAIN_REQUESTS.getField(ID));
     }
 
     @Override

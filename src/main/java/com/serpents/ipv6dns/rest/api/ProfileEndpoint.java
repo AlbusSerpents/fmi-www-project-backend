@@ -1,6 +1,5 @@
 package com.serpents.ipv6dns.rest.api;
 
-import com.serpents.ipv6dns.credentials.UserRole;
 import com.serpents.ipv6dns.spring.user.details.UserDetailsImpl;
 import com.serpents.ipv6dns.user.profile.Profile;
 import com.serpents.ipv6dns.user.profile.ProfileService;
@@ -10,10 +9,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 import java.util.UUID;
 
-import static com.serpents.ipv6dns.credentials.UserRole.fromToken;
 import static com.serpents.ipv6dns.utils.UserDetailsUtils.validateUserId;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
@@ -35,20 +32,9 @@ public class ProfileEndpoint {
     @RequestMapping(value = "/{userId}", method = GET, produces = "application/json")
     public Profile getMyProfile(
             final @AuthenticationPrincipal UserDetailsImpl details,
-            final @PathVariable(name = "userId") UUID userId,
-            final @RequestParam(name = "userRole") char roleToken) {
+            final @PathVariable(name = "userId") UUID userId) {
         validateUserId(details, userId);
-        final Optional<UserRole> role = fromToken(roleToken);
-        return service.getMyProfile(userId, role);
-    }
-
-    @ResponseStatus(OK)
-    @RequestMapping(value = "/view/{userId}", method = GET, produces = "application/json")
-    public Profile viewUserProfile(
-            final @PathVariable(name = "userId") UUID userId,
-            final @RequestParam(name = "userRole") char roleToken) {
-        final Optional<UserRole> role = fromToken(roleToken);
-        return service.viewProfile(userId, role);
+        return service.getMyProfile(userId);
     }
 
     @ResponseStatus(NO_CONTENT)

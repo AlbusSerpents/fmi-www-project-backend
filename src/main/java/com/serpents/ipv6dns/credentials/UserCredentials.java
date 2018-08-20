@@ -11,6 +11,5 @@ public class UserCredentials {
     private final UUID userId;
     private final String username;
     private final String password;
-    private final Boolean isBlocked;
 
 }

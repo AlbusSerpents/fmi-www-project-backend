@@ -14,23 +14,18 @@ import java.util.UUID;
 public class DomainRequest {
 
     private UUID id;
-    @NotNull
-    private DomainRequestStatus status;
     private UUID clientId;
 
+    @NotNull
+    private DomainRequestStatus status;
     private DomainDetails domainDetails;
 
+    @SuppressWarnings("WeakerAccess")
     public DomainRequest(final UUID clientId, final DomainRequestStatus status, final DomainDetails domainDetails) {
-        this.clientId = clientId;
-        this.status = status;
-        this.domainDetails = domainDetails;
+        this(null, clientId, status, domainDetails);
     }
 
-    @Data
-    @AllArgsConstructor
-    public static final class Identifier {
-        private final UUID requestId;
-        private final UUID clientId;
+    public enum DomainRequestStatus {
+        SENT, APPROVED
     }
-
 }

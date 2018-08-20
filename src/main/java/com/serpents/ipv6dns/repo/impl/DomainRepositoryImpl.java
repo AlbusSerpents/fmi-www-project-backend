@@ -1,19 +1,20 @@
 package com.serpents.ipv6dns.repo.impl;
 
 import com.serpents.ipv6dns.address.Address;
-import com.serpents.ipv6dns.domain.*;
+import com.serpents.ipv6dns.domain.Domain;
+import com.serpents.ipv6dns.domain.Domain.DomainInfo;
+import com.serpents.ipv6dns.domain.DomainDetails;
+import com.serpents.ipv6dns.domain.DomainRepository;
 import org.jooq.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.serpents.ipv6dns.utils.JooqField.*;
 import static com.serpents.ipv6dns.utils.JooqTable.*;
 import static com.serpents.ipv6dns.utils.JooqUtils.optionalFieldCondition;
-import static java.util.Optional.ofNullable;
 import static org.jooq.impl.DSL.inline;
 
 @Repository
@@ -36,12 +37,6 @@ public class DomainRepositoryImpl implements DomainRepository {
     }
 
     @Override
-    public Optional<DomainInfo> findById(final UUID domainId) {
-        final DomainInfo result = findInfoByCondition(idCondition(domainId));
-        return ofNullable(result);
-    }
-
-    @Override
     public DomainInfo findByCriteria(final String name, final String address) {
         return findInfoByCondition(nameCondition(name).and(addressCondition(address)));
     }
@@ -52,31 +47,13 @@ public class DomainRepositoryImpl implements DomainRepository {
     }
 
     @Override
-    public Optional<Domain> findByOwnerAndId(final UUID ownerId, final UUID domainId) {
-        final Condition ownerIdCondition = ownerCondition(ownerId).and(idCondition(domainId));
-        final Domain result = selectByCondition(ownerIdCondition).fetchOne(MAPPER);
-        return ofNullable(result);
-    }
-
-    @Override
-    public DomainCreatedResponse insert(final Domain domain) {
-        final UUID id = context
+    public void insert(final Domain domain) {
+        context
                 .insertInto(DOMAINS.getTable(), DOMAINS.getField(ID), DOMAINS.getField(OWNER), DOMAINS.getField(DETAILS_ID))
                 .values(inline(domain.getAddress().getId()), inline(domain.getOwner()), inline(domain.getDomainDetails().getId()))
                 .returning(DOMAINS.getField(ID))
                 .fetchOne()
                 .get(DOMAINS.getField(ID));
-
-        return new DomainCreatedResponse(id);
-    }
-
-    @Override
-    public List<Domain> findAll(final DomainsSearch search) {
-        final Condition clientIdCondition = clientIdCondition(search.getClientId());
-        final Condition nameCondition = nameCondition(search.getName());
-        final Condition addressCondition = addressCondition(search.getAddress());
-        final Condition finalCondition = clientIdCondition.and(nameCondition).and(addressCondition);
-        return selectByCondition(finalCondition).fetch(MAPPER);
     }
 
     private SelectConditionStep<Record7<UUID, UUID, UUID, String, UUID, String, String>> selectByCondition(final Condition condition) {
@@ -103,10 +80,6 @@ public class DomainRepositoryImpl implements DomainRepository {
                       .fetchOne(INFO_MAPPER);
     }
 
-    private static Condition idCondition(final UUID domainId) {
-        return DOMAINS.getField(ID).equal(inline(domainId));
-    }
-
     private static Condition ownerCondition(final UUID ownerId) {
         return DOMAINS.getField(OWNER).equal(inline(ownerId));
     }
@@ -117,9 +90,5 @@ public class DomainRepositoryImpl implements DomainRepository {
 
     private static Condition nameCondition(final String name) {
         return optionalFieldCondition(DOMAIN_DETAILS.getField(DOMAIN_NAME), name);
-    }
-
-    private static Condition clientIdCondition(final UUID clientId) {
-        return optionalFieldCondition(DOMAINS.getField(OWNER), clientId);
     }
 }

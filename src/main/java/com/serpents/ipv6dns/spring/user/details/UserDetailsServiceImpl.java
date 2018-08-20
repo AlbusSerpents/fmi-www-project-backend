@@ -53,7 +53,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     private UserDetails fromCredentials(final UserCredentials credentials, final Collection<GrantedAuthority> authorities) {
-        return new UserDetailsImpl(credentials.getUserId(), credentials.getUsername(), credentials.getPassword(), authorities, !credentials.getIsBlocked());
+        return new UserDetailsImpl(credentials.getUserId(), credentials.getUsername(), credentials.getPassword(), authorities);
     }
 
     private Pair<Optional<UserRole>, String> splitUsername(final String username) {

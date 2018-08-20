@@ -9,10 +9,15 @@ import java.util.UUID;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class ClientMyProfile extends ClientProfile {
+public class MyProfile extends Profile {
     private final String username;
 
-    public ClientMyProfile(final UUID id, final String username, final String name, final Integer facultyNumber, final String email) {
+    public MyProfile(
+            final UUID id,
+            final String username,
+            final String name,
+            final Integer facultyNumber,
+            final String email) {
         super(id, name, email, facultyNumber);
         this.username = username;
     }

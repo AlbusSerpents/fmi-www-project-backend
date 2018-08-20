@@ -3,7 +3,6 @@ package com.serpents.ipv6dns.domain.request;
 import com.serpents.ipv6dns.address.Address;
 import com.serpents.ipv6dns.address.AddressesRepository;
 import com.serpents.ipv6dns.domain.Domain;
-import com.serpents.ipv6dns.domain.DomainCreatedResponse;
 import com.serpents.ipv6dns.domain.DomainDetails;
 import com.serpents.ipv6dns.domain.DomainRepository;
 import com.serpents.ipv6dns.exception.InvalidDomainNameException;
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import static com.serpents.ipv6dns.domain.request.DomainRequestStatus.SENT;
+import static com.serpents.ipv6dns.domain.request.DomainRequest.DomainRequestStatus.SENT;
 import static com.serpents.ipv6dns.spring.properties.ApplicationPropertiesKey.DNS_ZONE_NAME;
 import static java.util.regex.Pattern.compile;
 
@@ -54,12 +53,12 @@ public class DomainRequestsService {
     }
 
     @Transactional
-    public DomainRequestResponse requestDomain(final UUID clientId, final DomainDetails details) {
+    public void requestDomain(final UUID clientId, final DomainDetails details) {
         final String domainName = details.getDomainName();
         final String realDomainName = validateDomainName(domainName);
         final DomainDetails realDetails = new DomainDetails(details.getId(), realDomainName, details.getDescription());
         final DomainRequest request = new DomainRequest(clientId, SENT, realDetails);
-        return requestsRepository.insert(request);
+        requestsRepository.insert(request);
     }
 
     private String validateDomainName(final String domainName) {
@@ -79,7 +78,7 @@ public class DomainRequestsService {
     }
 
     @Transactional
-    public DomainCreatedResponse approve(final UUID requestId) {
+    public void approve(final UUID requestId) {
         final Address address = addressesRepository
                 .findFree()
                 .orElseThrow(OutOfAddressSpaceException::new);
@@ -88,7 +87,7 @@ public class DomainRequestsService {
         final Domain domain = new Domain(info, address);
 
         approveRequest(requestId);
-        return domainRepository.insert(domain);
+        domainRepository.insert(domain);
     }
 
     private void approveRequest(final UUID requestId) {

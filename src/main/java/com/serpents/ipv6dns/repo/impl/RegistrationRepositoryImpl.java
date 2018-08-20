@@ -30,16 +30,18 @@ public class RegistrationRepositoryImpl implements RegistrationRepository {
     @Override
     public Optional<UUID> createClient(final RegistrationRequest request) {
         final UUID id = randomUUID();
+        return insertUser(request, id) && insertClient(request, id) ? of(id) : empty();
+    }
 
-        final boolean inserted =
-                context.insertInto(USERS.getTable(), USERS.getField(ID), USERS.getField(USERNAME), USERS.getField(PASSWORD), USERS.getField(NAME))
-                       .values(inline(id), inline(request.getUsername()), inline(request.getPassword()), inline(request.getName()))
-                       .execute() == 1
-                &&
-                context.insertInto(CLIENTS.getTable(), CLIENTS.getField(ID), CLIENTS.getField(EMAIL), CLIENTS.getField(FACULTY_NUMBER), CLIENTS.getField(IS_BLOCKED))
-                       .values(inline(id), inline(request.getEmail()), inline(request.getFacultyNumber()), inline(false))
-                       .execute() == 1;
+    private boolean insertUser(final RegistrationRequest request, final UUID id) {
+        return context.insertInto(USERS.getTable(), USERS.getField(ID), USERS.getField(USERNAME), USERS.getField(PASSWORD), USERS.getField(NAME))
+                      .values(inline(id), inline(request.getUsername()), inline(request.getPassword()), inline(request.getName()))
+                      .execute() == 1;
+    }
 
-        return inserted ? of(id) : empty();
+    private boolean insertClient(final RegistrationRequest request, final UUID id) {
+        return context.insertInto(CLIENTS.getTable(), CLIENTS.getField(ID), CLIENTS.getField(EMAIL), CLIENTS.getField(FACULTY_NUMBER))
+                      .values(inline(id), inline(request.getEmail()), inline(request.getFacultyNumber()))
+                      .execute() == 1;
     }
 }

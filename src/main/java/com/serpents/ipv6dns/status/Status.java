@@ -17,4 +17,7 @@ public class Status {
     private final LocalDateTime now;
     private final ApplicationStatus status;
 
+    public enum ApplicationStatus {
+        RUNNING, DOWN
+    }
 }

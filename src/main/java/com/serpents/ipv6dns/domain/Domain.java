@@ -18,4 +18,11 @@ public class Domain {
     public Domain(final DomainRequestInfo info, final Address address) {
         this(null, info.getClientId(), info.getDetails(), address);
     }
+
+    @Data
+    @AllArgsConstructor
+    public static class DomainInfo {
+        private final String address;
+        private final String name;
+    }
 }

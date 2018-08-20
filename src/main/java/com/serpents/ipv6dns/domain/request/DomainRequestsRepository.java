@@ -9,7 +9,7 @@ public interface DomainRequestsRepository {
 
     DomainRequestInfo findById(final UUID id);
 
-    DomainRequestResponse insert(final DomainRequest request);
+    void insert(final DomainRequest request);
 
     boolean approve(final UUID id);
 

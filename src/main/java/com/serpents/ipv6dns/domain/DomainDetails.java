@@ -29,6 +29,7 @@ public class DomainDetails {
         this.description = ofNullable(description);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public Optional<String> description() {
         return description;
     }

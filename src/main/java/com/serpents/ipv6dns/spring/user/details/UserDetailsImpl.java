@@ -12,14 +12,17 @@ public class UserDetailsImpl implements UserDetails {
     private final String username;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
-    private final boolean isEnabled;
 
-    public UserDetailsImpl(final UUID userId, final String username, final String password, final Collection<? extends GrantedAuthority> authorities, final boolean isEnabled) {
+    @SuppressWarnings("WeakerAccess")
+    public UserDetailsImpl(
+            final UUID userId,
+            final String username,
+            final String password,
+            final Collection<? extends GrantedAuthority> authorities) {
         this.userId = userId;
         this.username = username;
         this.password = password;
         this.authorities = authorities;
-        this.isEnabled = isEnabled;
     }
 
     public UUID getUserId() {
@@ -58,6 +61,6 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return isEnabled;
+        return true;
     }
 }

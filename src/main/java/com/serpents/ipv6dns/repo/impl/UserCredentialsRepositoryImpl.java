@@ -28,18 +28,17 @@ class UserCredentialsRepositoryImpl implements UserCredentialsRepository {
                               ADMIN_USERS.getField(PASSWORD))
                       .from(ADMIN_USERS.getTable())
                       .where(ADMIN_USERS.getField(USERNAME).equal(inline(username)))
-                      .fetchOne(record -> new UserCredentials(record.value1(), record.value2(), record.value3(), false));
+                      .fetchOne(record -> new UserCredentials(record.value1(), record.value2(), record.value3()));
     }
 
     @Override
     public UserCredentials findClient(final String username) {
         return context.select(CLIENT_USERS.getField(ID),
                               CLIENT_USERS.getField(USERNAME),
-                              CLIENT_USERS.getField(PASSWORD),
-                              CLIENT_USERS.getField(IS_BLOCKED))
+                              CLIENT_USERS.getField(PASSWORD))
                       .from(CLIENT_USERS.getTable())
                       .where(CLIENT_USERS.getField(USERNAME).equal(inline(username)))
-                      .fetchOne(record -> new UserCredentials(record.value1(), record.value2(), record.value3(), record.value4()));
+                      .fetchOne(record -> new UserCredentials(record.value1(), record.value2(), record.value3()));
     }
 
 }

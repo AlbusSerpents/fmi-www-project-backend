@@ -11,4 +11,5 @@ public class Profile {
     private final UUID id;
     private final String name;
     private final String email;
+    private final Integer facultyNumber;
 }

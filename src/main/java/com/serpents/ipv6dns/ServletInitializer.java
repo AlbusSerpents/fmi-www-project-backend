@@ -3,6 +3,7 @@ package com.serpents.ipv6dns;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 
+@SuppressWarnings("WeakerAccess")
 public class ServletInitializer extends SpringBootServletInitializer {
 
     @Override

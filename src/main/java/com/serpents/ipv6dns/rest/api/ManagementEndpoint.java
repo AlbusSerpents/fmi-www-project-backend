@@ -1,7 +1,7 @@
 package com.serpents.ipv6dns.rest.api;
 
 import com.serpents.ipv6dns.management.ManagementService;
-import com.serpents.ipv6dns.user.profile.ClientProfile;
+import com.serpents.ipv6dns.user.profile.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
 @RequestMapping("/manage")
@@ -26,26 +27,8 @@ public class ManagementEndpoint {
     }
 
     @RequestMapping(value = "", method = GET)
-    public List<ClientProfile> getAllClients() {
+    public List<Profile> getAllClients() {
         return service.getAllClients();
-    }
-
-    @ResponseStatus(NO_CONTENT)
-    @RequestMapping(value = "/{userId}/block", method = POST)
-    public void block(final @PathVariable(value = "userId") UUID clientId) {
-        service.block(clientId);
-    }
-
-    @ResponseStatus(NO_CONTENT)
-    @RequestMapping(value = "/{userId}/unblock", method = POST)
-    public void unblock(final @PathVariable(value = "userId") UUID clientId) {
-        service.unblocked(clientId);
-    }
-
-    @ResponseStatus(NO_CONTENT)
-    @RequestMapping(value = "/{userId}/domains", method = DELETE)
-    public void deleteDomains(final @PathVariable(value = "userId") UUID clientId) {
-        service.revokeDomainOwnership(clientId);
     }
 
     @ResponseStatus(NO_CONTENT)

@@ -1,7 +1,7 @@
 package com.serpents.ipv6dns.domain;
 
+import com.serpents.ipv6dns.domain.Domain.DomainInfo;
 import com.serpents.ipv6dns.exception.InvalidSearchException;
-import com.serpents.ipv6dns.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +20,6 @@ public class DomainService {
     }
 
     @Transactional
-    public DomainInfo readById(final UUID domainId) {
-        return repository.findById(domainId).orElseThrow(NotFoundException::new);
-    }
-
-    @Transactional
     public DomainInfo readByCriteria(final String name, final String address) {
         if (name == null && address == null) {
             throw new InvalidSearchException("Fill either the name or the address field");
@@ -36,16 +31,6 @@ public class DomainService {
     @Transactional
     public List<Domain> readMy(final UUID clientId) {
         return repository.findByOwner(clientId);
-    }
-
-    @Transactional
-    public Domain readMy(final UUID clientId, final UUID domainId) {
-        return repository.findByOwnerAndId(clientId, domainId).orElseThrow(NotFoundException::new);
-    }
-
-    @Transactional
-    public List<Domain> readAll(final DomainsSearch search) {
-        return repository.findAll(search);
     }
 
 }

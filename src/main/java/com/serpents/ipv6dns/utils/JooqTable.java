@@ -71,16 +71,6 @@ public enum JooqTable {
             return fieldsMap;
         }
     },
-    ADMINS(table("admins")) {
-        @Override
-        protected Map<JooqField<?>, Name> loadFieldsMap() {
-            final Map<JooqField<?>, Name> fieldsMap = new HashMap<>();
-
-            fieldsMap.put(ID, DSL.name("id"));
-            fieldsMap.put(EMAIL, DSL.name("email"));
-            return fieldsMap;
-        }
-    },
     CLIENTS(table("clients")) {
         @Override
         protected Map<JooqField<?>, Name> loadFieldsMap() {
@@ -89,7 +79,6 @@ public enum JooqTable {
             fieldsMap.put(ID, DSL.name("id"));
             fieldsMap.put(EMAIL, DSL.name("email"));
             fieldsMap.put(FACULTY_NUMBER, DSL.name("faculty_number"));
-            fieldsMap.put(IS_BLOCKED, DSL.name("is_blocked"));
             return fieldsMap;
         }
     },
@@ -116,7 +105,6 @@ public enum JooqTable {
             fieldsMap.put(NAME, DSL.name("name"));
             fieldsMap.put(EMAIL, DSL.name("email"));
             fieldsMap.put(FACULTY_NUMBER, DSL.name("faculty_number"));
-            fieldsMap.put(IS_BLOCKED, DSL.name("is_blocked"));
             return fieldsMap;
         }
     },
@@ -150,12 +138,8 @@ public enum JooqTable {
 
 
     public <T> Field<T> getField(final JooqField<T> field) {
-        return getField(field, true);
-    }
-
-    public <T> Field<T> getField(final JooqField<T> field, final boolean qualified) {
         final Name fieldName = fields.get(field);
-        final Name fullName = qualified ? DSL.name(getTable().getName(), fieldName.first()) : fieldName;
+        final Name fullName = DSL.name(getTable().getName(), fieldName.first());
         return field(fullName, field.getFieldClass());
     }
 

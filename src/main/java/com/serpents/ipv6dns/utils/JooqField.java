@@ -10,7 +10,6 @@ public class JooqField<T> {
     public static final JooqField<String> NAME = new JooqField<>(String.class);
     public static final JooqField<String> EMAIL = new JooqField<>(String.class);
     public static final JooqField<Integer> FACULTY_NUMBER = new JooqField<>(Integer.class);
-    public static final JooqField<Boolean> IS_BLOCKED = new JooqField<>(Boolean.class);
     public static final JooqField<String> DOMAIN_NAME = new JooqField<>(String.class);
     public static final JooqField<String> DESCRIPTION = new JooqField<>(String.class);
     public static final JooqField<UUID> CLIENT_ID = new JooqField<>(UUID.class);
@@ -27,7 +26,7 @@ public class JooqField<T> {
 
     private final Class<T> fieldClass;
 
-    public Class<T> getFieldClass() {
+    Class<T> getFieldClass() {
         return fieldClass;
     }
 }
